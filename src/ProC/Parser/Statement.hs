@@ -2,14 +2,13 @@ module ProC.Parser.Statement where
 
 import ProC.Language
 import ProC.Parser.Lexer
-import ProC.Parser.NumericExpression
 import ProC.Parser.StringExpression
 
 import Text.Parsec
 import Text.Parsec.String
 
 printStatement :: Parser Statement
-printStatement = try (p stringExpression) <|> p numericExpression
+printStatement = p stringExpression
   where
     p expr = reserved "print" >> parens expr >>= return . Print
   
