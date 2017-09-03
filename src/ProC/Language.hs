@@ -1,30 +1,25 @@
+{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 module ProC.Language where
 
 import Control.Monad
 
-import Data.List
+data StringExpression =
+  StringLiteral String | StringConcat StringExpression StringExpression
 
-data Expression a where
-    StringLiteral :: String -> Expression String
-
-instance (Show a) => Show (Expression a) where
-  show (StringLiteral s) = "\"" ++ s
-
-
-eval :: Expression a -> a
+eval :: StringExpression -> String
 eval (StringLiteral s) = s
+eval (StringConcat l r) = eval l ++ eval r
 
 data Statement where
     Noop :: Statement
-    Print :: Expression String -> Statement
+    Print :: StringExpression -> Statement
     Seq :: [Statement] -> Statement
-    
-instance Show Statement where
-  show Noop = ""
-  show (Print s) = "print(" ++ show s ++ ")"
-  show (Seq s) = intercalate ";" $ fmap show s
-    
+        
 exec :: Statement -> IO ()
 exec (Noop) = return ()
 exec (Print s) = putStrLn $ eval s
