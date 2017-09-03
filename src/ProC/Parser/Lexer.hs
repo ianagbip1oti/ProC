@@ -15,7 +15,7 @@ procDef = emptyDef
     , Token.identStart      = letter
     , Token.identLetter     = alphaNum
     , Token.reservedNames   = ["print"]
-    , Token.reservedOpNames = ["++"]
+    , Token.reservedOpNames = ["++", "+", "-", "*", "/"]
     }
 
 lexer :: Token.GenTokenParser String u Identity

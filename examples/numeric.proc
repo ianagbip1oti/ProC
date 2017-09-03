@@ -1,4 +1,6 @@
 
-print(1);
-
-print("The number is:" ++ 2);
+print("The number is:        2=" ++ 2);
+print("Negated:             -2=" ++ -2);
+print("Multiply:           2*2=" ++ 2 * 2);
+print("Order of ops:   2*3 + 2=" ++ 2*3 + 2);
+print("Brackets:     2 * (3+2)=" ++ 2*(3+2));
