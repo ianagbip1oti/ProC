@@ -3,30 +3,43 @@ module ProC.Parser where
 
 import ProC.Language
 
-import Text.ParserCombinators.Parsec
+import Text.Parsec
+import Text.Parsec.Language
+import Text.Parsec.String
+import qualified Text.Parsec.Token as Token
 
-symbol :: String -> Parser ()
-symbol s = spaces >> string s >> spaces
+procDef = emptyDef
+    { Token.commentStart  = "/*"
+    , Token.commentEnd    = "*/"
+    , Token.commentLine   = "//"
+    , Token.identStart    = letter
+    , Token.identLetter   = alphaNum
+    , Token.reservedNames = ["print"]
+    }
 
-stringLiteral = do
-    s <- between (char '"') (char '"') . many $ noneOf "\""
-    return $ StringLiteral s
+lexer = Token.makeTokenParser procDef
+
+parens        = Token.parens        lexer
+reserved      = Token.reserved      lexer
+semi          = Token.semi          lexer
+semiSep1      = Token.semiSep1      lexer
+stringLiteral = Token.stringLiteral lexer
+symbol        = Token.symbol        lexer
+whiteSpace    = Token.whiteSpace    lexer
 
 printStatement :: Parser Statement
-printStatement = do
-  symbol "print"
-  symbol "("
-  s <- stringLiteral
-  symbol ")"
-  return $ Print s
+printStatement = reserved "print" >> arg >>= return . Print
+  where
+    arg = parens $ StringLiteral <$> stringLiteral
   
 noopStatement :: Parser Statement
-noopStatement = spaces >> return Noop
+noopStatement = whiteSpace >> return Noop
 
 statement :: Parser Statement
 statement = do
+    whiteSpace
     -- TODO: We allow input that doens't finish with a final ;
-    list <- sepBy1 statement' (symbol ";")
+    list <- semiSep1 statement'
     eof
     return $ Seq list
     where
