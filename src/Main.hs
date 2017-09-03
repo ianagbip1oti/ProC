@@ -3,8 +3,6 @@ module Main(main) where
 import ProC.Language
 import ProC.Parser
 
-import Control.Applicative
-
 import System.Environment
 
 main :: IO ()
