@@ -1,7 +1,14 @@
 module ProC.Language where
 
-data Statement = Print String
+import Control.Monad
+
+data Statement =
+    Noop
+    | Print String
+    | Seq [Statement]
     deriving (Show)
     
 exec :: Statement -> IO ()
+exec (Noop) = return ()
 exec (Print s) = putStrLn s
+exec (Seq ss) = forM_ ss exec

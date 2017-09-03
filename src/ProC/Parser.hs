@@ -3,9 +3,6 @@ module ProC.Parser where
 
 import ProC.Language
 
-import Debug.Trace
-
-import Text.Parsec.Language
 import Text.ParserCombinators.Parsec
 
 symbol s = spaces >> string s >> spaces
@@ -18,11 +15,19 @@ printStatement = do
   symbol "("
   s <- stringLiteral
   symbol ")"
-  symbol ";"
   return $ Print s
+  
+noopStatement :: Parser Statement
+noopStatement = spaces >> return Noop
 
 statement :: Parser Statement
-statement = printStatement
+statement = do
+    -- TODO: We allow input that doens't finish with a final ;
+    list <- sepBy1 statement' (symbol ";")
+    eof
+    return $ Seq list
+    where
+        statement' = printStatement <|> noopStatement
 
 parseProC :: String -> Either ParseError Statement
 parseProC = parse statement "(Unknown)"
