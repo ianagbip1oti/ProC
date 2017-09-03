@@ -3,6 +3,8 @@ Hawt new programming language
 
 ## Requirements
 
+Initial list as provided by [@InitializeSahib](http://github.com/InitializeSahib)
+
 - c-like syntax (but can deviate a little)
 - no do/end stuff(edited)
 - no case-based syntax (looking at you, go)
@@ -12,7 +14,11 @@ Hawt new programming language
 - optional: actual module system
 - optional: package manager for modules
 
-Provided by [@InitializeSahib](http://github.com/InitializeSahib)
+Additional requirements upon further discussion
+
+- Static Typing
+- Compiled (Note, I believe this will be possible to add, even with initially being an interpreted language)
+
 
 ## Building
 
