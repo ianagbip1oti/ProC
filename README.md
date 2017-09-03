@@ -1,4 +1,5 @@
 # ProC
+
 Hawt new programming language
 
 ## Requirements
@@ -12,17 +13,21 @@ Hawt new programming language
 - optional: actual module system
 - optional: package manager for modules
 
-## Building
+## Build and Run
+
+### Stack
 
 ```bash
-> cabal install
+> stack build
+> stack exec ProC examples/hello_world.proc
 ```
 
-## Running
+### Cabal
 
 ProC will be installed to the user installation directory. On *nix this is ~/.cabal/bin.
 
 ```bash
+> cabal install
 > ~/.cabal/bin/ProC examples/hello_world.proc
 ```
 

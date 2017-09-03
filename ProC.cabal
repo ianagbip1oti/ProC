@@ -13,6 +13,8 @@ cabal-version:       >=1.8
 
 executable ProC
   hs-source-dirs:      src
-  main-is:             Main.hs   
-  build-depends:       base == 4.6.0.1,
+  main-is:             Main.hs  
+  other-modules:       ProC.Language,
+                       ProC.Parser
+  build-depends:       base == 4.9.1.0,
                        parsec == 3.1.11
