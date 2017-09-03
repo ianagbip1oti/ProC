@@ -12,7 +12,7 @@ import Text.Parsec.Expr
 import Text.Parsec.String
 
 term :: Parser StringExpression
-term = lit <|> num
+term = parens stringExpression <|> lit <|> num 
   where
     lit = StringLiteral <$> stringLiteral
     num = StringFromNumericExpression <$> numericExpression
