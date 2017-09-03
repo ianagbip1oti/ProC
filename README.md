@@ -12,6 +12,8 @@ Hawt new programming language
 - optional: actual module system
 - optional: package manager for modules
 
+Provided by @InitializeSahib
+
 ## Building
 
 ```bash
