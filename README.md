@@ -1,4 +1,5 @@
 # ProC
+
 Hawt new programming language
 
 ## Requirements
@@ -19,18 +20,21 @@ Additional requirements upon further discussion
 - Static Typing
 - Compiled (Note, I believe this will be possible to add, even with initially being an interpreted language)
 
+## Build and Run
 
-## Building
+### Stack
 
 ```bash
-> cabal install
+> stack build
+> stack exec ProC examples/hello_world.proc
 ```
 
-## Running
+### Cabal
 
 ProC will be installed to the user installation directory. On *nix this is ~/.cabal/bin.
 
 ```bash
+> cabal install
 > ~/.cabal/bin/ProC examples/hello_world.proc
 ```
 

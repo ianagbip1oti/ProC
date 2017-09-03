@@ -5,6 +5,7 @@ import ProC.Language
 
 import Text.ParserCombinators.Parsec
 
+symbol :: String -> Parser ()
 symbol s = spaces >> string s >> spaces
 
 stringLiteral = do
