@@ -7,7 +7,9 @@ import Text.ParserCombinators.Parsec
 
 symbol s = spaces >> string s >> spaces
 
-stringLiteral = between (char '"') (char '"') . many $ noneOf "\""
+stringLiteral = do
+    s <- between (char '"') (char '"') . many $ noneOf "\""
+    return $ StringLiteral s
 
 printStatement :: Parser Statement
 printStatement = do
