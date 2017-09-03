@@ -24,8 +24,7 @@ Additional requirements upon further discussion:
 
 ### Stack
 
-```
-bash
+```bash
 > stack build
 > stack exec ProC examples/hello_world.proc
 ```
