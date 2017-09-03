@@ -7,7 +7,7 @@ Hawt new programming language
 Initial list as provided by [@InitializeSahib](http://github.com/InitializeSahib)
 
 - c-like syntax (but can deviate a little)
-- no do/end stuff(edited)
+- no do/end stuff (edited)
 - no case-based syntax (looking at you, go)
 - no -> operator
 - native string type
@@ -15,7 +15,7 @@ Initial list as provided by [@InitializeSahib](http://github.com/InitializeSahib
 - optional: actual module system
 - optional: package manager for modules
 
-Additional requirements upon further discussion
+Additional requirements upon further discussion:
 
 - Static Typing
 - Compiled (Note, I believe this will be possible to add, even with initially being an interpreted language)
@@ -24,17 +24,8 @@ Additional requirements upon further discussion
 
 ### Stack
 
-```bash
+```
+bash
 > stack build
 > stack exec ProC examples/hello_world.proc
 ```
-
-### Cabal
-
-ProC will be installed to the user installation directory. On *nix this is ~/.cabal/bin.
-
-```bash
-> cabal install
-> ~/.cabal/bin/ProC examples/hello_world.proc
-```
-
