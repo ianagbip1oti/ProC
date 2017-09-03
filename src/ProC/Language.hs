@@ -20,10 +20,15 @@ instance ToString Integer where
 class Eval exp res | exp -> res where
   eval :: exp -> res
 
-data NumericExpression = IntLiteral Integer
-
+data NumericExpression =
+    IntLiteral Integer
+    | UnaryOp (Integer -> Integer) NumericExpression
+    | BinOp (Integer -> Integer -> Integer) NumericExpression NumericExpression
+    
 instance Eval NumericExpression Integer where
     eval (IntLiteral i) = i
+    eval (UnaryOp op e) = op $ eval e
+    eval (BinOp op l r) = eval l `op` eval r
 
 data StringExpression where
   StringFromNumericExpression :: NumericExpression -> StringExpression
