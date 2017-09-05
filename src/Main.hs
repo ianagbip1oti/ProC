@@ -1,6 +1,6 @@
 module Main(main) where
 
-import ProC.Language
+import ProC.Interpreter
 import ProC.Parser
 
 import System.Environment
