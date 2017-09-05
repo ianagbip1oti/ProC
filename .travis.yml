@@ -1,2 +1,28 @@
-language: haskell
-ghc: 8.0
+# Based on https://raw.githubusercontent.com/commercialhaskell/stack/master/doc/travis-simple.yml
+
+language: generic
+
+sudo: false
+
+cache:
+  directories:
+  - $HOME/.stack
+
+addons:
+  apt:
+    packages:
+      # For GHC
+      - libgmp-dev
+      
+before_install:
+# Download and unpack the stack executable
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+install:
+- stack --no-terminal --install-ghc test --only-dependencies
+
+# Build the package, its tests, and its docs and run the tests
+- stack --no-terminal test
+      
