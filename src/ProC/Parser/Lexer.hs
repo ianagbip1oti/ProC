@@ -15,11 +15,14 @@ procDef = emptyDef
     , Token.identStart      = letter
     , Token.identLetter     = alphaNum
     , Token.reservedNames   = ["print"]
-    , Token.reservedOpNames = ["++", "+", "-", "*", "/"]
+    , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/"]
     }
 
 lexer :: Token.GenTokenParser String u Identity
 lexer = Token.makeTokenParser procDef
+
+identifier    :: Parser String
+identifier     = Token.identifier    lexer
 
 integer       :: Parser Integer
 integer        = Token.integer       lexer

@@ -6,5 +6,5 @@ import ProC.Parser.Statement
 
 import Text.Parsec
 
-parseProC :: String -> Either ParseError Statement
+parseProC :: String -> Either ParseError ProCProgram
 parseProC = parse statement "(Unknown)"

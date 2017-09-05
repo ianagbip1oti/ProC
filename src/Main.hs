@@ -11,4 +11,4 @@ main = do
     input <- readFile inputFile
     case parseProC input of
       (Left e) -> putStrLn $ show e
-      (Right s) -> exec s
+      (Right p) -> run p

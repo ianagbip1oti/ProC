@@ -15,11 +15,14 @@ executable ProC
   hs-source-dirs:      src
   main-is:             Main.hs
   ghc-options:         -Wall -fwarn-tabs -Werror
-  other-modules:       ProC.Language,
+  other-modules:       ProC.Interpreter.Context,
+                       ProC.Language,
                        ProC.Parser,
                        ProC.Parser.Lexer,
                        ProC.Parser.NumericExpression,
                        ProC.Parser.Statement,
                        ProC.Parser.StringExpression
   build-depends:       base == 4.9.1.0,
+                       containers == 0.5.7.1,
+                       mtl == 2.2.1,
                        parsec == 3.1.11
