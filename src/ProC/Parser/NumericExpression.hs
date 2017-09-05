@@ -13,6 +13,7 @@ import Text.Parsec.String
 term :: Parser NumericExpression
 term = parens numericExpression
    <|> IntLiteral <$> integer
+   -- TODO: Check the variable has been defined, and the type
    <|> IntVariable <$> identifier
 
 ops :: OperatorTable String () Identity NumericExpression

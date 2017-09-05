@@ -6,15 +6,12 @@
 {-# LANGUAGE TypeSynonymInstances #-}
 module ProC.Language where
 
+import ProC.Interpreter.Context
+
 import Control.Monad
 import Control.Monad.State
 
 type ProCProgram = Statement
-
-type ProCEnvM = StateT () IO
-
-evalProCEnvM :: ProCEnvM a -> s -> IO a
-evalProCEnvM f _ = evalStateT f ()
 
 class ToString s where
     toString :: s -> String
@@ -26,7 +23,7 @@ instance ToString Integer where
     toString = show
 
 class Eval exp res | exp -> res where
-  eval :: exp -> ProCEnvM res
+  eval :: exp -> ContextM res
 
 data NumericExpression =
     IntLiteral Integer
@@ -36,7 +33,7 @@ data NumericExpression =
     
 instance Eval NumericExpression Integer where
     eval (IntLiteral i) = return i
-    eval (IntVariable _) = return 0 -- for now
+    eval (IntVariable n) = getVarM n
     eval (UnaryOp op e) = eval e >>= return . op
     eval (BinOp op l r) = op <$> eval l <*> eval r
 
@@ -56,11 +53,11 @@ data Statement where
     Seq :: [Statement] -> Statement
     IntVarDecl :: String -> NumericExpression -> Statement
         
-exec :: Statement -> ProCEnvM ()
-exec (IntVarDecl _ _) = return () -- for now
+exec :: Statement -> ContextM ()
+exec (IntVarDecl n e) = eval e >>= setVarM n
 exec (Noop) = return ()
 exec (Print s) = eval s >>= liftIO . putStrLn
 exec (Seq ss) = forM_ ss exec
 
 run :: ProCProgram -> IO ()
-run p = evalProCEnvM (exec p) ()
+run p = evalContextM (exec p)
