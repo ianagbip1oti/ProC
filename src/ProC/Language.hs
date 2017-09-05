@@ -31,14 +31,14 @@ instance Eval NumericExpression Integer where
     eval (BinOp op l r) = eval l `op` eval r
 
 data StringExpression where
-  StringFromNumericExpression :: NumericExpression -> StringExpression
+  ToS :: NumericExpression -> StringExpression
   StringLiteral :: String -> StringExpression
   StringConcat :: StringExpression -> StringExpression -> StringExpression
 
 instance Eval StringExpression String where
     eval (StringLiteral s) = s
     eval (StringConcat l r) = mconcat $ toString . eval <$> [l, r]
-    eval (StringFromNumericExpression n) = toString $ eval n
+    eval (ToS n) = toString $ eval n
 
 data Statement where
     Noop :: Statement

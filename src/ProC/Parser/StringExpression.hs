@@ -15,7 +15,7 @@ term :: Parser StringExpression
 term = parens stringExpression <|> lit <|> num 
   where
     lit = StringLiteral <$> stringLiteral
-    num = StringFromNumericExpression <$> numericExpression
+    num = reserved "tos" >> ToS <$> parens numericExpression
 
 ops :: OperatorTable String () Identity StringExpression
 ops = [ [ Infix (reservedOp "++" >> return StringConcat) AssocLeft ] ]
