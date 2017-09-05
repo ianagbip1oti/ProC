@@ -15,7 +15,8 @@ executable ProC
   hs-source-dirs:      src
   main-is:             Main.hs
   ghc-options:         -Wall -fwarn-tabs -Werror
-  other-modules:       ProC.Interpreter.Context,
+  other-modules:       ProC.Interpreter,
+                       ProC.Interpreter.Context,
                        ProC.Language,
                        ProC.Parser,
                        ProC.Parser.Lexer,
