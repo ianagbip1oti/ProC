@@ -11,12 +11,13 @@ data Context = Context
 empty :: Context
 empty = Context { variables = M.empty }
 
-getVar :: String -> Context -> Maybe Integer
-getVar n c = M.lookup n (variables c)
+getVar :: String -> Context -> Integer
+getVar n c = case M.lookup n (variables c) of
   Just v  -> v
+  Nothing -> error $ "Unknown var: " ++ n
   -- TODO: We should use Maybe here
   --       and have ContextM with an ErrorT (or similar) in the stack
-  Nothing -> error $ "Unknown var: " ++ n
+
 
 setVar :: String -> Integer -> Context -> Context
 setVar n v c = c { variables = M.insert n v (variables c) }
