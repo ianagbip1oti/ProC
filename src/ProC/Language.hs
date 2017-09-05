@@ -11,6 +11,11 @@ import Control.Monad.State
 
 type ProCProgram = Statement
 
+type ProCEnvM = StateT () IO
+
+evalProCEnvM :: ProCEnvM a -> s -> IO a
+evalProCEnvM f _ = evalStateT f ()
+
 class ToString s where
     toString :: s -> String
     
@@ -21,7 +26,7 @@ instance ToString Integer where
     toString = show
 
 class Eval exp res | exp -> res where
-  eval :: exp -> res
+  eval :: exp -> ProCEnvM res
 
 data NumericExpression =
     IntLiteral Integer
@@ -30,10 +35,10 @@ data NumericExpression =
     | BinOp (Integer -> Integer -> Integer) NumericExpression NumericExpression
     
 instance Eval NumericExpression Integer where
-    eval (IntLiteral i) = i
-    eval (IntVariable _) = 0 -- for now
-    eval (UnaryOp op e) = op $ eval e
-    eval (BinOp op l r) = eval l `op` eval r
+    eval (IntLiteral i) = return i
+    eval (IntVariable _) = return 0 -- for now
+    eval (UnaryOp op e) = eval e >>= return . op
+    eval (BinOp op l r) = op <$> eval l <*> eval r
 
 data StringExpression where
   ToS :: NumericExpression -> StringExpression
@@ -41,9 +46,9 @@ data StringExpression where
   StringConcat :: StringExpression -> StringExpression -> StringExpression
 
 instance Eval StringExpression String where
-    eval (StringLiteral s) = s
-    eval (StringConcat l r) = mconcat $ toString . eval <$> [l, r]
-    eval (ToS n) = toString $ eval n
+    eval (StringLiteral s) = return s
+    eval (StringConcat l r) = (++) <$> eval l <*> eval r
+    eval (ToS n) = eval n >>= return . toString
 
 data Statement where
     Noop :: Statement
@@ -51,11 +56,11 @@ data Statement where
     Seq :: [Statement] -> Statement
     IntVarDecl :: String -> NumericExpression -> Statement
         
-exec :: Statement -> StateT () IO ()
+exec :: Statement -> ProCEnvM ()
 exec (IntVarDecl _ _) = return () -- for now
 exec (Noop) = return ()
-exec (Print s) = liftIO . putStrLn $ eval s
+exec (Print s) = eval s >>= liftIO . putStrLn
 exec (Seq ss) = forM_ ss exec
 
 run :: ProCProgram -> IO ()
-run p = evalStateT (exec p) ()
+run p = evalProCEnvM (exec p) ()
