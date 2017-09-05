@@ -2,6 +2,7 @@ module ProC.Parser.Statement where
 
 import ProC.Language
 import ProC.Parser.Lexer
+import ProC.Parser.NumericExpression
 import ProC.Parser.StringExpression
 
 import Text.Parsec
@@ -12,6 +13,14 @@ printStatement = p stringExpression
   where
     p expr = reserved "print" >> parens expr >>= return . Print
   
+intVarDeclStatement :: Parser Statement
+intVarDeclStatement = do
+  reserved "int"
+  name <- identifier
+  reservedOp "="
+  expr <- numericExpression
+  return $ IntVarDecl name expr
+ 
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
@@ -23,4 +32,4 @@ statement = do
     eof
     return $ Seq list
     where
-        statement' = printStatement <|> noopStatement
+        statement' = printStatement <|> intVarDeclStatement <|> noopStatement

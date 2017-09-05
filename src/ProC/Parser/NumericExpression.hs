@@ -11,7 +11,9 @@ import Text.Parsec.Expr
 import Text.Parsec.String
 
 term :: Parser NumericExpression
-term = IntLiteral <$> integer <|> parens numericExpression
+term = parens numericExpression
+   <|> IntLiteral <$> integer
+   <|> IntVariable <$> identifier
 
 ops :: OperatorTable String () Identity NumericExpression
 ops = [ [ Prefix (reservedOp "-" >> return (UnaryOp (\n -> -n))) ] 

@@ -4,3 +4,7 @@ print("Negated:             -2=" ++ tos(-2));
 print("Multiply:           2*2=" ++ tos(2 * 2));
 print("Order of ops:   2*3 + 2=" ++ tos(2*3 + 2));
 print("Brackets:     2 * (3+2)=" ++ tos(2*(3+2)));
+
+int a = 42;
+
+print("Variables:            a=" ++ tos(a));
