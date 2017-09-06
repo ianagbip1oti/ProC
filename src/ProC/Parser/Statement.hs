@@ -20,7 +20,7 @@ intVarDeclStatement = do
   reserved "int"
   name <- identifier
   defined <- isDefinedM name
-  when defined . fail $ "Variable is already defined: " ++ name
+  when defined . fail $ "Already defined: " ++ show name
   reservedOp "="
   expr <- numericExpression
   insertVariableM name

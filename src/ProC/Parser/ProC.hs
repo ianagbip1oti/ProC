@@ -9,12 +9,12 @@ import qualified Data.Set as Set
 import Text.Parsec
 import Text.Parsec.Expr
 
-data ParseContext = ParseContext { variables :: Set String }
+data ParseContext = ParseContext { variables :: Set Identifier }
 
-insertVariable :: String -> ParseContext -> ParseContext
+insertVariable :: Identifier -> ParseContext -> ParseContext
 insertVariable v c = ParseContext { variables = Set.insert v (variables c) }
 
-isDefined :: String -> ParseContext -> Bool
+isDefined :: Identifier -> ParseContext -> Bool
 isDefined v c = Set.member v (variables c)
 
 empty :: ParseContext
@@ -22,10 +22,10 @@ empty = ParseContext Set.empty
 
 type Parser = Parsec String ParseContext
 
-insertVariableM :: String -> Parser ()
+insertVariableM :: Identifier -> Parser ()
 insertVariableM v = modifyState $ insertVariable v
 
-isDefinedM :: String -> Parser Bool
+isDefinedM :: Identifier -> Parser Bool
 isDefinedM v = getState >>= return . isDefined v
 
 type POperatorTable a = OperatorTable String ParseContext Identity a

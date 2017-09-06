@@ -1,5 +1,6 @@
 module ProC.Parser.Lexer where
 
+import ProC.Language
 import ProC.Parser.ProC
 
 import Data.Functor.Identity
@@ -22,8 +23,8 @@ procDef = emptyDef
 lexer :: Token.GenTokenParser String u Identity
 lexer = Token.makeTokenParser procDef
 
-identifier    :: Parser String
-identifier     = Token.identifier    lexer
+identifier    :: Parser Identifier
+identifier     = Token.identifier    lexer >>= return . Identifier
 
 integer       :: Parser Integer
 integer        = Token.integer       lexer
