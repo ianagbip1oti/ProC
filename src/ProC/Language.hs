@@ -3,9 +3,13 @@ module ProC.Language where
 
 type ProCProgram = Statement
 
+newtype Identifier = Identifier String
+    deriving (Eq, Ord, Show)
+    
+
 data NumericExpression =
     IntLiteral Integer
-    | IntVariable String
+    | IntVariable Identifier
     -- Defining UnaryOp and BinOp with functions here may be
     -- limiting our ability to compile in the future
     | UnaryOp (Integer -> Integer) NumericExpression
@@ -20,4 +24,4 @@ data Statement where
     Noop :: Statement
     Print :: StringExpression -> Statement
     Seq :: [Statement] -> Statement
-    IntVarDecl :: String -> NumericExpression -> Statement
+    IntVarDecl :: Identifier -> NumericExpression -> Statement
