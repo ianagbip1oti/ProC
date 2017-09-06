@@ -21,6 +21,7 @@ executable ProC
                        ProC.Parser,
                        ProC.Parser.Lexer,
                        ProC.Parser.NumericExpression,
+                       ProC.Parser.ProC,
                        ProC.Parser.Statement,
                        ProC.Parser.StringExpression
   build-depends:       base == 4.9.1.0,

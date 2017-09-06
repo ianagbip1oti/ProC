@@ -1,10 +1,11 @@
 module ProC.Parser.Lexer where
 
+import ProC.Parser.ProC
+
 import Data.Functor.Identity
 
 import Text.Parsec
 import Text.Parsec.Language
-import Text.Parsec.String
 import qualified Text.Parsec.Token as Token
 
 procDef :: LanguageDef a

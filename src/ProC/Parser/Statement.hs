@@ -3,10 +3,12 @@ module ProC.Parser.Statement where
 import ProC.Language
 import ProC.Parser.Lexer
 import ProC.Parser.NumericExpression
+import ProC.Parser.ProC
 import ProC.Parser.StringExpression
 
+import Control.Monad
+
 import Text.Parsec
-import Text.Parsec.String
 
 printStatement :: Parser Statement
 printStatement = p stringExpression
@@ -17,10 +19,13 @@ intVarDeclStatement :: Parser Statement
 intVarDeclStatement = do
   reserved "int"
   name <- identifier
+  defined <- isDefinedM name
+  when defined . fail $ "Variable is already defined: " ++ name
   reservedOp "="
   expr <- numericExpression
+  insertVariableM name
   return $ IntVarDecl name expr
- 
+     
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
