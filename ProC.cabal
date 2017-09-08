@@ -28,3 +28,11 @@ executable ProC
                        containers == 0.5.7.1,
                        mtl == 2.2.1,
                        parsec == 3.1.11
+                       
+test-suite spec
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  ghc-options:         -Wall -fwarn-tabs -Werror
+  build-depends:       base == 4.9.1.0,
+                       hspec == 2.4.4
