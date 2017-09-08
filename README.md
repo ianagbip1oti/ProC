@@ -1,6 +1,7 @@
 # ProC
 
 [![Build Status](https://travis-ci.org/ianagbip1oti/ProC.svg?branch=master)](https://travis-ci.org/ianagbip1oti/ProC)
+[![Coverage Status](https://coveralls.io/repos/github/ianagbip1oti/ProC/badge.svg?branch=master)](https://coveralls.io/github/ianagbip1oti/ProC?branch=master)
 
 Hawt new programming language
 
