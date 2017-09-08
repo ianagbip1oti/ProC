@@ -30,6 +30,6 @@ isDefinedM v = getState >>= return . isDefined v
 
 type POperatorTable a = OperatorTable String ParseContext Identity a
 
-parse :: Parser ProCProgram -> String -> Either ParseError ProCProgram
+parse :: Parser a -> String -> Either ParseError a
 parse p = runParser p empty "(Unknown)"
 
