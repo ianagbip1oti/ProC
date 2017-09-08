@@ -1,5 +1,7 @@
 # ProC
 
+[![Build Status](https://travis-ci.org/ianagbip1oti/ProC.svg?branch=master)](https://travis-ci.org/ianagbip1oti/ProC)
+
 Hawt new programming language
 
 ## Requirements
