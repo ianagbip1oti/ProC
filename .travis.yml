@@ -22,8 +22,7 @@ before_install:
 
 install:
 - stack --no-terminal --install-ghc test --only-dependencies
-- stack --no-terminal --coverage build
-- stack --no-terminal --coverage test
+- stack --no-terminal test --coverage
 
 after_script:
 - stack install hpc-coveralls-1.0.10
