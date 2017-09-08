@@ -25,6 +25,6 @@ install:
 - stack --no-terminal test --coverage
 
 after_script:
-- stack install hpc-coveralls-1.0.10
-- hpc-coveralls spec
+- travis_retry curl -L https://github.com/rubik/stack-hpc-coveralls/releases/download/v0.0.4.0/shc-linux-x64-$GHCVER.tar.bz2 | tar -xj
+- ./shc ProC spec
       
