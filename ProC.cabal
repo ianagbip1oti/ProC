@@ -11,11 +11,10 @@ maintainer:          ianagbip1oti@gmail.com
 build-type:          Simple
 cabal-version:       >=1.8
 
-executable ProC
+library
   hs-source-dirs:      src
-  main-is:             Main.hs
   ghc-options:         -Wall -fwarn-tabs -Werror
-  other-modules:       ProC.Interpreter,
+  exposed-modules:     ProC.Interpreter,
                        ProC.Interpreter.Context,
                        ProC.Language,
                        ProC.Parser,
@@ -29,10 +28,20 @@ executable ProC
                        mtl == 2.2.1,
                        parsec == 3.1.11
                        
+executable ProC
+  hs-source-dirs:      bin
+  main-is:             Interpreter.hs
+  ghc-options:         -Wall -fwarn-tabs -Werror
+  build-depends:       base == 4.9.1.0,
+                       ProC
+                       
+                       
 test-suite spec
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
   ghc-options:         -Wall -fwarn-tabs -Werror
+  other-modules:       SanitySpec
   build-depends:       base == 4.9.1.0,
-                       hspec == 2.4.4
+                       hspec == 2.4.4,
+                       ProC
