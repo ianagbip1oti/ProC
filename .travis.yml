@@ -26,6 +26,6 @@ install:
 - stack --no-terminal --coverage test
 
 after_script:
-- stack install hpc-coveralls
+- stack install hpc-coveralls-1.0.10
 - hpc-coveralls spec
       
