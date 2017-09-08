@@ -22,11 +22,10 @@ before_install:
 
 install:
 - stack --no-terminal --install-ghc test --only-dependencies
-
-# Build the package, its tests, and its docs and run the tests
+- stack --no-terminal --coverage build
 - stack --no-terminal --coverage test
 
 after_script:
-- cabal install hpc-coveralls
+- stack install hpc-coveralls
 - hpc-coveralls spec
       
