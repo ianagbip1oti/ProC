@@ -15,14 +15,13 @@ term = parens numericExpression
    <|> IntVariable <$> identifier
 
 ops :: POperatorTable NumericExpression
-ops = [ [ Prefix (reservedOp "-" >> return (UnaryOp (\n -> -n))) ] 
-      , [ Infix  (reservedOp "*" >> return (BinOp (*))) AssocLeft
-        , Infix  (reservedOp "/" >> return (BinOp (div))) AssocLeft
-        ]
-      , [ Infix  (reservedOp "+" >> return (BinOp (+))) AssocLeft
-        , Infix  (reservedOp "-" >> return (BinOp (-))) AssocLeft
-        ]
+ops = [ [ Prefix (op "-" (UnaryOp Negate)) ]
+      , [ inf "*" Multiply, inf "/" Divide   ]
+      , [ inf "+" Add,      inf "-" Subtract ]
       ] 
+    where
+      inf s o = Infix (op s (BinOp o)) AssocLeft
+      op s o = reservedOp s >> return o
 
 numericExpression :: Parser NumericExpression
 numericExpression = buildExpressionParser ops term
