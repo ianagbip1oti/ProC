@@ -1,6 +1,8 @@
 {-# LANGUAGE DataKinds #-}
 
-module ProC.Parser where
+module ProC.Parser
+  ( parseProC
+  ) where
 
 import           ProC.Language
 import           ProC.Parser.ProC

@@ -3,7 +3,9 @@
 {-# LANGUAGE MultiParamTypeClasses  #-}
 {-# LANGUAGE TypeSynonymInstances   #-}
 
-module ProC.Interpreter where
+module ProC.Interpreter
+  ( run
+  ) where
 
 import           ProC.Interpreter.Context
 import           ProC.Language
@@ -38,11 +40,11 @@ instance Eval NumericExpression Integer where
 instance Eval StringExpression String where
   eval (StringLiteral s)  = return s
   eval (StringConcat l r) = (++) <$> eval l <*> eval r
-  eval (ToS n)            = eval n >>= return . toString
+  eval (ToS n)            = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (IntVarDecl n e) = eval e >>= setVarM n
-exec (Noop)           = return ()
+exec Noop             = return ()
 exec (Print s)        = eval s >>= liftIO . putStrLn
 exec (Seq ss)         = forM_ ss exec
 

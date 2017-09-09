@@ -1,7 +1,8 @@
-module SanitySpec where
+module SanitySpec
+  ( spec
+  ) where
 
 import           Test.Hspec
 
 spec :: Spec
-spec = do
-  describe "sanity" $ do it "should be sane" $ do True `shouldBe` True
+spec = describe "sanity" $ it "should be sane" $ True `shouldBe` True
