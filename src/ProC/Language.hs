@@ -37,7 +37,7 @@ data NumericExpression
 
 data StringExpression
   = ToS NumericExpression
-  | StringLiteral String
+  | StrLiteral String
   | StringConcat StringExpression
                  StringExpression
   deriving (Eq, Show)
@@ -48,4 +48,6 @@ data Statement
   | Seq [Statement]
   | IntVarDecl Identifier
                NumericExpression
+  | StrVarDecl Identifier
+               StringExpression
   deriving (Eq, Show)

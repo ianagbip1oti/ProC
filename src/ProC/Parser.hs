@@ -11,4 +11,4 @@ import           ProC.Parser.Statement
 import           Text.Parsec           (ParseError)
 
 parseProC :: String -> Either ParseError ProCProgram
-parseProC = parse statement
+parseProC = parse statements
