@@ -18,7 +18,8 @@ printStatement = p stringExpression
   where
     p expr = Print <$> (reserved "print" >> parens expr)
 
-varDeclStatement :: String -> Parser e -> (Identifier -> e -> Statement) -> Parser Statement
+varDeclStatement ::
+     String -> Parser e -> (Identifier -> e -> Statement) -> Parser Statement
 varDeclStatement res exprP decl = do
   reserved res
   name <- identifier
@@ -27,14 +28,14 @@ varDeclStatement res exprP decl = do
   reservedOp "="
   expr <- exprP
   insertVariableM name
-  return $ decl name exprgit 
+  return $ decl name exprgit
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
-  
+
 strVarDeclStatement :: Parser Statement
 strVarDeclStatement = varDeclStatement "str" stringExpression StrVarDecl
-  
+
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
