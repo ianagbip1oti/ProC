@@ -28,7 +28,7 @@ varDeclStatement res exprP decl = do
   reservedOp "="
   expr <- exprP
   insertVariableM name
-  return $ decl name exprgit
+  return $ decl name expr
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
