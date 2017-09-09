@@ -1,5 +1,6 @@
 module ProC.Parser.Statement
   ( statement
+  , statements
   ) where
 
 import           ProC.Language
@@ -17,26 +18,36 @@ printStatement = p stringExpression
   where
     p expr = Print <$> (reserved "print" >> parens expr)
 
-intVarDeclStatement :: Parser Statement
-intVarDeclStatement = do
-  reserved "int"
+varDeclStatement ::
+     String -> Parser e -> (Identifier -> e -> Statement) -> Parser Statement
+varDeclStatement res exprP decl = do
+  reserved res
   name <- identifier
   defined <- isDefinedM name
   when defined . fail $ "Already defined: " ++ show name
   reservedOp "="
-  expr <- numericExpression
+  expr <- exprP
   insertVariableM name
-  return $ IntVarDecl name expr
+  return $ decl name expr
+
+intVarDeclStatement :: Parser Statement
+intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
+
+strVarDeclStatement :: Parser Statement
+strVarDeclStatement = varDeclStatement "str" stringExpression StrVarDecl
 
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
 statement :: Parser Statement
-statement = do
+statement =
+  printStatement <|> intVarDeclStatement <|> strVarDeclStatement <|>
+  noopStatement
+
+statements :: Parser Statement
+statements = do
   whiteSpace
     -- TODO: We allow input that doens't finish with a final ;
-  list <- semiSep1 statement'
+  list <- semiSep1 statement
   eof
   return $ Seq list
-  where
-    statement' = printStatement <|> intVarDeclStatement <|> noopStatement

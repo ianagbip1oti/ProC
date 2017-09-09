@@ -12,5 +12,4 @@ spec :: Spec
 spec =
   describe "term" $
   it "parses simple string" $
-  parse stringExpression "\"a string\"" `shouldBe`
-  Right (StringLiteral "a string")
+  parse stringExpression "\"a string\"" `shouldBe` Right (StrLiteral "a string")

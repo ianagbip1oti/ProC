@@ -12,4 +12,4 @@ spec =
   describe "parseProC" $
   it "parses Hello World" $
   parseProC "print(\"Hello World\");" `shouldBe`
-  Right (Seq [Print (StringLiteral "Hello World"), Noop])
+  Right (Seq [Print (StrLiteral "Hello World"), Noop])

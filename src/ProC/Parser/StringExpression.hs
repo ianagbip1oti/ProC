@@ -14,7 +14,7 @@ import           Text.Parsec.Expr
 term :: Parser StringExpression
 term = parens stringExpression <|> lit <|> num
   where
-    lit = StringLiteral <$> stringLiteral
+    lit = StrLiteral <$> stringLiteral
     num = reserved "tos" >> ToS <$> parens numericExpression
 
 ops :: POperatorTable StringExpression

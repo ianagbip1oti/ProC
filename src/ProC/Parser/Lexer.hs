@@ -28,7 +28,7 @@ procDef =
   , Token.commentLine = "//"
   , Token.identStart = letter
   , Token.identLetter = alphaNum
-  , Token.reservedNames = ["print"]
+  , Token.reservedNames = ["int", "print", "str"]
   , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/"]
   }
 
