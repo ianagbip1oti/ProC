@@ -35,8 +35,7 @@ statement :: Parser Statement
 statement = do
   whiteSpace
     -- TODO: We allow input that doens't finish with a final ;
-  list <- semiSep1 statement'
-  eof
+  list <- sepBy1 statement' semi
   return $ Seq list
   where
     statement' = printStatement <|> intVarDeclStatement <|> noopStatement

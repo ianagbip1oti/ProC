@@ -48,3 +48,4 @@ data Statement
   | Seq [Statement]
   | IntVarDecl Identifier
                NumericExpression
+  deriving (Eq, Show)
