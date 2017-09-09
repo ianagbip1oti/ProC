@@ -1,10 +1,7 @@
 module SanitySpec where
 
-import Test.Hspec
+import           Test.Hspec
 
 spec :: Spec
 spec = do
-    describe "sanity" $ do
-        it "should be sane" $ do
-            True `shouldBe` True
-    
+  describe "sanity" $ do it "should be sane" $ do True `shouldBe` True

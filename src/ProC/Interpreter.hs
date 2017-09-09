@@ -1,50 +1,50 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
+{-# LANGUAGE TypeSynonymInstances   #-}
+
 module ProC.Interpreter where
 
-import ProC.Interpreter.Context
-import ProC.Language
+import           ProC.Interpreter.Context
+import           ProC.Language
 
-import Control.Monad.State
+import           Control.Monad.State
 
 class ToString s where
-    toString :: s -> String
-    
-instance ToString String where
-    toString = id
-    
-instance ToString Integer where
-    toString = show
+  toString :: s -> String
 
+instance ToString String where
+  toString = id
+
+instance ToString Integer where
+  toString = show
 
 class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
-    
+
 instance Eval NumericExpression Integer where
-    eval (IntLiteral i)       = return i
-    eval (IntVariable n)      = getVarM n
-    eval (UnaryOp Negate e)   = negate <$> eval e
-    eval (BinOp o l r)        = case o of
-        Add -> op (+) l r
-        Subtract -> op (-) l r
-        Multiply -> op (*) l r
-        Divide   -> op div l r
-      where
-        op f x y = f <$> eval x <*> eval y
+  eval (IntLiteral i) = return i
+  eval (IntVariable n) = getVarM n
+  eval (UnaryOp Negate e) = negate <$> eval e
+  eval (BinOp o l r) =
+    case o of
+      Add      -> op (+) l r
+      Subtract -> op (-) l r
+      Multiply -> op (*) l r
+      Divide   -> op div l r
+    where
+      op f x y = f <$> eval x <*> eval y
 
 instance Eval StringExpression String where
-    eval (StringLiteral s) = return s
-    eval (StringConcat l r) = (++) <$> eval l <*> eval r
-    eval (ToS n) = eval n >>= return . toString
+  eval (StringLiteral s)  = return s
+  eval (StringConcat l r) = (++) <$> eval l <*> eval r
+  eval (ToS n)            = eval n >>= return . toString
 
-    
 exec :: Statement -> ContextM ()
 exec (IntVarDecl n e) = eval e >>= setVarM n
-exec (Noop) = return ()
-exec (Print s) = eval s >>= liftIO . putStrLn
-exec (Seq ss) = forM_ ss exec
+exec (Noop)           = return ()
+exec (Print s)        = eval s >>= liftIO . putStrLn
+exec (Seq ss)         = forM_ ss exec
 
 run :: ProCProgram -> IO ()
 run p = evalContextM (exec p)
