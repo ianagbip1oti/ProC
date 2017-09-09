@@ -1,6 +1,12 @@
-{-# LANGUAGE GADTs #-}
-
-module ProC.Language where
+module ProC.Language
+  ( Identifier(..)
+  , NumericBinOp(..)
+  , NumericExpression(..)
+  , NumericUnaryOp(..)
+  , ProCProgram
+  , Statement(..)
+  , StringExpression(..)
+  ) where
 
 type ProCProgram = Statement
 
@@ -29,14 +35,16 @@ data NumericExpression
           NumericExpression
   deriving (Eq, Show)
 
-data StringExpression where
-  ToS :: NumericExpression -> StringExpression
-  StringLiteral :: String -> StringExpression
-  StringConcat :: StringExpression -> StringExpression -> StringExpression
+data StringExpression
+  = ToS NumericExpression
+  | StringLiteral String
+  | StringConcat StringExpression
+                 StringExpression
   deriving (Eq, Show)
 
-data Statement where
-  Noop :: Statement
-  Print :: StringExpression -> Statement
-  Seq :: [Statement] -> Statement
-  IntVarDecl :: Identifier -> NumericExpression -> Statement
+data Statement
+  = Noop
+  | Print StringExpression
+  | Seq [Statement]
+  | IntVarDecl Identifier
+               NumericExpression

@@ -1,4 +1,10 @@
-module ProC.Parser.ProC where
+module ProC.Parser.ProC
+  ( Parser
+  , POperatorTable
+  , isDefinedM
+  , insertVariableM
+  , parse
+  ) where
 
 import           ProC.Language
 
@@ -6,10 +12,11 @@ import           Data.Functor.Identity
 import           Data.Set              (Set)
 import qualified Data.Set              as Set
 
-import           Text.Parsec
+import           Text.Parsec           (ParseError, Parsec, getState,
+                                        modifyState, runParser)
 import           Text.Parsec.Expr
 
-data ParseContext = ParseContext
+newtype ParseContext = ParseContext
   { variables :: Set Identifier
   }
 
@@ -28,7 +35,7 @@ insertVariableM :: Identifier -> Parser ()
 insertVariableM v = modifyState $ insertVariable v
 
 isDefinedM :: Identifier -> Parser Bool
-isDefinedM v = getState >>= return . isDefined v
+isDefinedM v = isDefined v <$> getState
 
 type POperatorTable a = OperatorTable String ParseContext Identity a
 

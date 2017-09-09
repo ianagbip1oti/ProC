@@ -1,4 +1,6 @@
-module ProC.Parser.StringExpression where
+module ProC.Parser.StringExpression
+  ( stringExpression
+  ) where
 
 import           ProC.Language
 import           ProC.Parser.Lexer

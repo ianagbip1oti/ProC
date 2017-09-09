@@ -1,4 +1,6 @@
-module ProC.Parser.Statement where
+module ProC.Parser.Statement
+  ( statement
+  ) where
 
 import           ProC.Language
 import           ProC.Parser.Lexer
@@ -13,7 +15,7 @@ import           Text.Parsec
 printStatement :: Parser Statement
 printStatement = p stringExpression
   where
-    p expr = reserved "print" >> parens expr >>= return . Print
+    p expr = Print <$> (reserved "print" >> parens expr)
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement = do

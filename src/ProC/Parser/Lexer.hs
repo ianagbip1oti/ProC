@@ -1,4 +1,15 @@
-module ProC.Parser.Lexer where
+module ProC.Parser.Lexer
+  ( identifier
+  , integer
+  , parens
+  , reserved
+  , reservedOp
+  , semi
+  , semiSep1
+  , stringLiteral
+  , symbol
+  , whiteSpace
+  ) where
 
 import           ProC.Language
 import           ProC.Parser.ProC
@@ -25,7 +36,7 @@ lexer :: Token.GenTokenParser String u Identity
 lexer = Token.makeTokenParser procDef
 
 identifier :: Parser Identifier
-identifier = Token.identifier lexer >>= return . Identifier
+identifier = Identifier <$> Token.identifier lexer
 
 integer :: Parser Integer
 integer = Token.integer lexer

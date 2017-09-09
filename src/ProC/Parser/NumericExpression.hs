@@ -1,4 +1,6 @@
-module ProC.Parser.NumericExpression where
+module ProC.Parser.NumericExpression
+  ( numericExpression
+  ) where
 
 import           ProC.Language
 import           ProC.Parser.Lexer
