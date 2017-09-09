@@ -18,25 +18,23 @@ printStatement = p stringExpression
   where
     p expr = Print <$> (reserved "print" >> parens expr)
 
-intVarDeclStatement :: Parser Statement
-intVarDeclStatement = do
-  reserved "int"
+varDeclStatement :: String -> Parser e -> (Identifier -> e -> Statement) -> Parser Statement
+varDeclStatement res exprP decl = do
+  reserved res
   name <- identifier
   defined <- isDefinedM name
   when defined . fail $ "Already defined: " ++ show name
   reservedOp "="
-  expr <- numericExpression
+  expr <- exprP
   insertVariableM name
-  return $ IntVarDecl name expr
+  return $ decl name exprgit 
 
+intVarDeclStatement :: Parser Statement
+intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
+  
 strVarDeclStatement :: Parser Statement
-strVarDeclStatement = do
-  reserved "str"
-  name <- identifier
-  reservedOp "="
-  expr <- stringExpression
-  return $ StrVarDecl name expr
-
+strVarDeclStatement = varDeclStatement "str" stringExpression StrVarDecl
+  
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
