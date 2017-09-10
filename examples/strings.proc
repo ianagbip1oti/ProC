@@ -2,3 +2,5 @@
 print("strings" ++ "conat");
 
 print("1" ++ ("2" ++ "3") ++ "4");
+
+print("Many"); print("Statements"); print(" One line");
