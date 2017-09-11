@@ -9,8 +9,3 @@ str s = "string var s";
 str t = "string var t";
 
 print("s ++ t:" ++ s ++ t);
-
-int a = 3;
-str u = "abc";
-
-str x = u ++ a;
