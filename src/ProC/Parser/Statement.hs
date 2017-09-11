@@ -31,7 +31,7 @@ varDeclStatement res exprP decl = do
   return $ decl name expr
 
 intVarDeclStatement :: Parser Statement
-intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
+intVarDeclStatement = varDeclStatement "int" numericExpression (\i e -> IntVarDecl (PVar i) e)
 
 strVarDeclStatement :: Parser Statement
 strVarDeclStatement = varDeclStatement "str" stringExpression StrVarDecl
