@@ -1,5 +1,5 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE DataKinds      #-}
+{-# LANGUAGE GADTs          #-}
 {-# LANGUAGE KindSignatures #-}
 
 module ProC.Language
@@ -17,7 +17,9 @@ module ProC.Language
 
 type ProCProgram = Statement
 
-data PType = PInt | PStr
+data PType
+  = PInt
+  | PStr
 
 data PVar :: PType -> * where
   PVar :: Identifier -> PVar a
