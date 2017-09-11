@@ -35,7 +35,8 @@ spec =
     it "should parse binary ops" $ property $ \op ->
       parse numericExpression ("1 " ++ formatBinOp op ++ " 1") `shouldBe`
       Right (BinOp op one one)
-    it "should parse int variables" $
-      parse statements "int a=1; int b=a*1+a;" `shouldSatisfy` isRight
+    it "should parse int variables" $ parse statements "int a=1; int b=a*1+a;" `shouldSatisfy`
+      isRight
     it "shold fail with str variable" $
-      parse statements "str a=\"abc\"; int b=a*1+a;" `shouldSatisfy` isLeft
+      parse statements "str a=\"abc\"; int b=a*1+a;" `shouldSatisfy`
+      isLeft
