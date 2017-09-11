@@ -12,10 +12,11 @@ import           Control.Applicative
 import           Text.Parsec.Expr
 
 term :: Parser StringExpression
-term = parens stringExpression <|> lit <|> num
+term = parens stringExpression <|> lit <|> num <|> var
   where
     lit = StrLiteral <$> stringLiteral
     num = reserved "tos" >> ToS <$> parens numericExpression
+    var = StrVariable . PVar <$> identifier
 
 ops :: POperatorTable StringExpression
 ops = [[Infix (reservedOp "++" >> return StringConcat) AssocLeft]]
