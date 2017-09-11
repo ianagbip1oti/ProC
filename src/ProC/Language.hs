@@ -12,15 +12,19 @@ module ProC.Language
   , StringExpression(..)
   , PVar(..)
   , PType(..)
+  , getIdentifier
   ) where
 
 type ProCProgram = Statement
 
-data PType = PInt
+data PType = PInt | PStr
 
 data PVar :: PType -> * where
   PVar :: Identifier -> PVar a
   deriving (Eq, Ord, Show)
+
+getIdentifier :: PVar a -> Identifier
+getIdentifier (PVar i) = i
 
 newtype Identifier =
   Identifier String
@@ -50,6 +54,7 @@ data NumericExpression
 data StringExpression
   = ToS NumericExpression
   | StrLiteral String
+  | StrVariable (PVar 'PStr)
   | StringConcat StringExpression
                  StringExpression
   deriving (Eq, Show)
@@ -60,6 +65,6 @@ data Statement
   | Seq [Statement]
   | IntVarDecl (PVar 'PInt)
                NumericExpression
-  | StrVarDecl Identifier
+  | StrVarDecl (PVar 'PStr)
                StringExpression
   deriving (Eq, Show)
