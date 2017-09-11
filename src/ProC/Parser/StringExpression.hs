@@ -8,6 +8,7 @@ import           ProC.Parser.NumericExpression (numericExpression)
 import           ProC.Parser.ProC
 
 import           Control.Applicative
+import           Control.Monad
 
 import           Text.Parsec.Expr
 
@@ -16,7 +17,11 @@ term = parens stringExpression <|> lit <|> num <|> var
   where
     lit = StrLiteral <$> stringLiteral
     num = reserved "tos" >> ToS <$> parens numericExpression
-    var = StrVariable . PVar <$> identifier
+    var = do
+      ident <- identifier
+      isValid <- isOfTypeM PStr ident
+      unless isValid $ fail ("Not str variable: " ++ show ident)
+      return . StrVariable $ PVar ident
 
 ops :: POperatorTable StringExpression
 ops = [[Infix (reservedOp "++" >> return StringConcat) AssocLeft]]

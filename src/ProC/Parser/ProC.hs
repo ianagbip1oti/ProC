@@ -2,6 +2,7 @@ module ProC.Parser.ProC
   ( Parser
   , POperatorTable
   , isDefinedM
+  , isOfTypeM
   , insertVariableM
   , parse
   ) where
@@ -17,25 +18,32 @@ import           Text.Parsec           (ParseError, Parsec, getState,
 import           Text.Parsec.Expr
 
 newtype ParseContext = ParseContext
-  { variables :: Set Identifier
+  { variables :: Set (Identifier, PType)
   }
 
-insertVariable :: Identifier -> ParseContext -> ParseContext
-insertVariable v c = ParseContext {variables = Set.insert v (variables c)}
+insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
+insertVariable v t c =
+  ParseContext {variables = Set.insert (v, t) (variables c)}
 
 isDefined :: Identifier -> ParseContext -> Bool
-isDefined v c = Set.member v (variables c)
+isDefined v c = any (\i -> v == fst i) (variables c)
+
+isOfType :: PType -> Identifier -> ParseContext -> Bool
+isOfType t i c = Set.member (i, t) (variables c)
 
 empty :: ParseContext
 empty = ParseContext Set.empty
 
 type Parser = Parsec String ParseContext
 
-insertVariableM :: Identifier -> Parser ()
-insertVariableM v = modifyState $ insertVariable v
+insertVariableM :: Identifier -> PType -> Parser ()
+insertVariableM v t = modifyState $ insertVariable v t
 
 isDefinedM :: Identifier -> Parser Bool
 isDefinedM v = isDefined v <$> getState
+
+isOfTypeM :: PType -> Identifier -> Parser Bool
+isOfTypeM t i = isOfType t i <$> getState
 
 type POperatorTable a = OperatorTable String ParseContext Identity a
 
