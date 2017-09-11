@@ -31,10 +31,12 @@ varDeclStatement res exprP decl = do
   return $ decl name expr
 
 intVarDeclStatement :: Parser Statement
-intVarDeclStatement = varDeclStatement "int" numericExpression IntVarDecl
+intVarDeclStatement =
+  varDeclStatement "int" numericExpression (IntVarDecl . PVar)
 
 strVarDeclStatement :: Parser Statement
-strVarDeclStatement = varDeclStatement "str" stringExpression StrVarDecl
+strVarDeclStatement =
+  varDeclStatement "str" stringExpression (StrVarDecl . PVar)
 
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop

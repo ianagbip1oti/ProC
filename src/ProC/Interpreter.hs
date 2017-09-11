@@ -39,12 +39,13 @@ instance Eval NumericExpression Integer where
 
 instance Eval StringExpression String where
   eval (StrLiteral s)     = return s
+  eval (StrVariable s)    = getVarM s
   eval (StringConcat l r) = (++) <$> eval l <*> eval r
   eval (ToS n)            = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (IntVarDecl n e) = eval e >>= setVarM n
-exec (StrVarDecl _ _) = error "Unimplemented"
+exec (StrVarDecl n e) = eval e >>= setVarM n
 exec Noop             = return ()
 exec (Print s)        = eval s >>= liftIO . putStrLn
 exec (Seq ss)         = forM_ ss exec

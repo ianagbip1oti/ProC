@@ -1,3 +1,7 @@
+{-# LANGUAGE DataKinds    #-}
+{-# LANGUAGE GADTs        #-}
+{-# LANGUAGE TypeFamilies #-}
+
 module ProC.Interpreter.Context
   ( ContextM
   , evalContextM
@@ -8,32 +12,53 @@ module ProC.Interpreter.Context
 import           ProC.Language
 
 import           Control.Monad.State
-
 import qualified Data.Map            as M
-import           Data.Maybe          (fromMaybe)
+
+data PValue
+  = PIntValue Integer
+  | PStrValue String
+  deriving (Show)
+
+class PTypeMapping a where
+  type HType a :: *
+  wrapValue :: PVar a -> HType a -> PValue
+  unwrapValue :: (Monad m) => PVar a -> PValue -> m (HType a)
+
+instance PTypeMapping 'PInt where
+  type HType 'PInt = Integer
+  wrapValue _ = PIntValue
+  unwrapValue _ (PIntValue i) = return i
+  unwrapValue _ v             = fail $ "Invalid value " ++ show v
+
+instance PTypeMapping 'PStr where
+  type HType 'PStr = String
+  wrapValue _ = PStrValue
+  unwrapValue _ (PStrValue s) = return s
+  unwrapValue _ v             = fail $ "Invalid value " ++ show v
 
 newtype Context = Context
-  { variables :: M.Map Identifier Integer
+  { variables :: M.Map Identifier PValue
   }
 
 empty :: Context
 empty = Context {variables = M.empty}
 
-getVar :: Identifier -> Context -> Integer
-getVar n c =
-  fromMaybe (error $ "Unknown: " ++ show n) $ M.lookup n (variables c)
-  -- TODO: We should use Maybe here
-  --       and have ContextM with an ErrorT (or similar) in the stack
+getVar :: (Monad m, PTypeMapping p) => PVar p -> Context -> m (HType p)
+getVar p c =
+  case M.lookup (getIdentifier p) (variables c) of
+    Nothing -> fail $ "Unknown: " ++ show p
+    Just v  -> unwrapValue p v
 
-setVar :: Identifier -> Integer -> Context -> Context
-setVar n v c = c {variables = M.insert n v (variables c)}
+setVar :: (PTypeMapping p) => PVar p -> HType p -> Context -> Context
+setVar n v c =
+  c {variables = M.insert (getIdentifier n) (wrapValue n v) (variables c)}
 
 type ContextM = StateT Context IO
 
-getVarM :: Identifier -> ContextM Integer
-getVarM n = getVar n <$> get
+getVarM :: (PTypeMapping p) => PVar p -> ContextM (HType p)
+getVarM p = get >>= getVar p
 
-setVarM :: Identifier -> Integer -> ContextM ()
+setVarM :: (PTypeMapping p) => PVar p -> HType p -> ContextM ()
 setVarM n v = modify (setVar n v)
 
 evalContextM :: ContextM a -> IO a

@@ -1,3 +1,7 @@
+{-# LANGUAGE DataKinds      #-}
+{-# LANGUAGE GADTs          #-}
+{-# LANGUAGE KindSignatures #-}
+
 module ProC.Language
   ( Identifier(..)
   , NumericBinOp(..)
@@ -6,9 +10,23 @@ module ProC.Language
   , ProCProgram
   , Statement(..)
   , StringExpression(..)
+  , PVar(..)
+  , PType(..)
+  , getIdentifier
   ) where
 
 type ProCProgram = Statement
+
+data PType
+  = PInt
+  | PStr
+
+data PVar :: PType -> * where
+  PVar :: Identifier -> PVar a
+  deriving (Eq, Ord, Show)
+
+getIdentifier :: PVar a -> Identifier
+getIdentifier (PVar i) = i
 
 newtype Identifier =
   Identifier String
@@ -27,7 +45,7 @@ data NumericBinOp
 
 data NumericExpression
   = IntLiteral Integer
-  | IntVariable Identifier
+  | IntVariable (PVar 'PInt)
   | UnaryOp NumericUnaryOp
             NumericExpression
   | BinOp NumericBinOp
@@ -38,6 +56,7 @@ data NumericExpression
 data StringExpression
   = ToS NumericExpression
   | StrLiteral String
+  | StrVariable (PVar 'PStr)
   | StringConcat StringExpression
                  StringExpression
   deriving (Eq, Show)
@@ -46,8 +65,8 @@ data Statement
   = Noop
   | Print StringExpression
   | Seq [Statement]
-  | IntVarDecl Identifier
+  | IntVarDecl (PVar 'PInt)
                NumericExpression
-  | StrVarDecl Identifier
+  | StrVarDecl (PVar 'PStr)
                StringExpression
   deriving (Eq, Show)

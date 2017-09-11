@@ -4,3 +4,8 @@ print("strings" ++ "conat");
 print("1" ++ ("2" ++ "3") ++ "4");
 
 print("Many"); print("Statements"); print(" One line");
+
+str s = "string var s";
+str t = "string var t";
+
+print("s ++ t:" ++ s ++ t);

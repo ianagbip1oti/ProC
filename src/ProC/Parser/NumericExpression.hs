@@ -13,7 +13,7 @@ import           Text.Parsec.Expr
 term :: Parser NumericExpression
 term =
   parens numericExpression <|> IntLiteral <$> integer <|>
-  IntVariable <$> identifier
+  IntVariable . PVar <$> identifier
 
 ops :: POperatorTable NumericExpression
 ops =
