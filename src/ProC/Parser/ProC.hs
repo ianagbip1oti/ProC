@@ -22,7 +22,8 @@ newtype ParseContext = ParseContext
   }
 
 insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
-insertVariable v t c = ParseContext {variables = Set.insert (v, t) (variables c)}
+insertVariable v t c =
+  ParseContext {variables = Set.insert (v, t) (variables c)}
 
 isDefined :: Identifier -> ParseContext -> Bool
 isDefined v c = any (\i -> v == fst i) (variables c)

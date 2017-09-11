@@ -19,7 +19,11 @@ printStatement = p stringExpression
     p expr = Print <$> (reserved "print" >> parens expr)
 
 varDeclStatement ::
-     String -> Parser e -> (Identifier -> e -> Statement) -> PType -> Parser Statement
+     String
+  -> Parser e
+  -> (Identifier -> e -> Statement)
+  -> PType
+  -> Parser Statement
 varDeclStatement res exprP decl typ = do
   reserved res
   name <- identifier
