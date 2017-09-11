@@ -7,13 +7,18 @@ import           ProC.Parser.Lexer
 import           ProC.Parser.ProC
 
 import           Control.Applicative
+import           Control.Monad
 
 import           Text.Parsec.Expr
 
 term :: Parser NumericExpression
-term =
-  parens numericExpression <|> IntLiteral <$> integer <|>
-  IntVariable . PVar <$> identifier
+term = parens numericExpression <|> IntLiteral <$> integer <|> var
+  where
+    var = do
+      ident <- identifier
+      isValid <- isOfTypeM PInt ident
+      unless isValid $ fail ("Not int variable: " ++ show ident)
+      return . IntVariable $ PVar ident
 
 ops :: POperatorTable NumericExpression
 ops =

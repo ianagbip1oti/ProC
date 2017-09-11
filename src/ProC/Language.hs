@@ -20,6 +20,7 @@ type ProCProgram = Statement
 data PType
   = PInt
   | PStr
+  deriving (Eq, Ord)
 
 data PVar :: PType -> * where
   PVar :: Identifier -> PVar a
