@@ -2,3 +2,8 @@
 print("strings" ++ "conat");
 
 print("1" ++ ("2" ++ "3") ++ "4");
+
+str s = "string var s";
+str t = "string var t";
+
+print("s ++ t:" ++ s ++ t);
