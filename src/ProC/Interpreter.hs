@@ -27,8 +27,8 @@ class Eval exp res | exp -> res where
 instance Eval NumericExpression Integer where
   eval (IntLiteral i) = return i
   eval (IntVariable n) = getVarM n
-  eval (UnaryOp Negate e) = negate <$> eval e
-  eval (BinOp o l r) =
+  eval (NumUnaryOp Negate e) = negate <$> eval e
+  eval (NumBinOp o l r) =
     case o of
       Add      -> op (+) l r
       Subtract -> op (-) l r
@@ -38,10 +38,10 @@ instance Eval NumericExpression Integer where
       op f x y = f <$> eval x <*> eval y
 
 instance Eval StringExpression String where
-  eval (StrLiteral s)     = return s
-  eval (StrVariable s)    = getVarM s
-  eval (StringConcat l r) = (++) <$> eval l <*> eval r
-  eval (ToS n)            = toString <$> eval n
+  eval (StrLiteral s)        = return s
+  eval (StrVariable s)       = getVarM s
+  eval (StrBinOp Concat l r) = (++) <$> eval l <*> eval r
+  eval (ToS n)               = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (IntVarDecl n e) = eval e >>= setVarM n

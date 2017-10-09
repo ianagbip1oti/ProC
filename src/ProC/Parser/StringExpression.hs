@@ -24,7 +24,7 @@ term = parens stringExpression <|> lit <|> num <|> var
       return . StrVariable $ PVar ident
 
 ops :: POperatorTable StringExpression
-ops = [[Infix (reservedOp "++" >> return StringConcat) AssocLeft]]
+ops = [[Infix (reservedOp "++" >> return (StrBinOp Concat)) AssocLeft]]
 
 stringExpression :: Parser StringExpression
 stringExpression = buildExpressionParser ops term

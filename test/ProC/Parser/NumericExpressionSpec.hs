@@ -3,6 +3,7 @@ module ProC.Parser.NumericExpressionSpec
   ) where
 
 import           ProC.Language
+import           ProC.LanguageInstances        ()
 import           ProC.Parser.NumericExpression
 import           ProC.Parser.ProC
 import           ProC.Parser.Statement
@@ -11,9 +12,6 @@ import           Data.Either
 
 import           Test.Hspec
 import           Test.QuickCheck
-
-instance Arbitrary NumericBinOp where
-  arbitrary = elements [Add, Subtract, Multiply, Divide]
 
 formatBinOp :: NumericBinOp -> String
 formatBinOp Add      = "+"
@@ -31,10 +29,10 @@ spec =
       i > 0 ==> parse numericExpression (show i) == Right (IntLiteral i)
     it "should parse negative int literals" $ property $ \i ->
       i < 0 ==> parse numericExpression (show i) ==
-      Right (UnaryOp Negate (IntLiteral (-i)))
+      Right (NumUnaryOp Negate (IntLiteral (-i)))
     it "should parse binary ops" $ property $ \op ->
       parse numericExpression ("1 " ++ formatBinOp op ++ " 1") `shouldBe`
-      Right (BinOp op one one)
+      Right (NumBinOp op one one)
     it "should parse int variables" $ parse statements "int a=1; int b=a*1+a;" `shouldSatisfy`
       isRight
     it "shold fail with str variable" $
