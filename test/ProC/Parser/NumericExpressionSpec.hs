@@ -3,6 +3,7 @@ module ProC.Parser.NumericExpressionSpec
   ) where
 
 import           ProC.Language
+import           ProC.LanguageInstances        ()
 import           ProC.Parser.NumericExpression
 import           ProC.Parser.ProC
 import           ProC.Parser.Statement
@@ -11,9 +12,6 @@ import           Data.Either
 
 import           Test.Hspec
 import           Test.QuickCheck
-
-instance Arbitrary NumericBinOp where
-  arbitrary = elements [Add, Subtract, Multiply, Divide]
 
 formatBinOp :: NumericBinOp -> String
 formatBinOp Add      = "+"
