@@ -38,10 +38,10 @@ instance Eval NumericExpression Integer where
       op f x y = f <$> eval x <*> eval y
 
 instance Eval StringExpression String where
-  eval (StrLiteral s)     = return s
-  eval (StrVariable s)    = getVarM s
+  eval (StrLiteral s)        = return s
+  eval (StrVariable s)       = getVarM s
   eval (StrBinOp Concat l r) = (++) <$> eval l <*> eval r
-  eval (ToS n)            = toString <$> eval n
+  eval (ToS n)               = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (IntVarDecl n e) = eval e >>= setVarM n

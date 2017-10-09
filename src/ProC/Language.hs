@@ -49,22 +49,23 @@ data NumericExpression
   = IntLiteral Integer
   | IntVariable (PVar 'PInt)
   | NumUnaryOp NumericUnaryOp
-            NumericExpression
+               NumericExpression
   | NumBinOp NumericBinOp
-          NumericExpression
-          NumericExpression
+             NumericExpression
+             NumericExpression
   deriving (Eq, Show)
 
-data StrBinOp
-  = Concat
+data StrBinOp =
+  Concat
   deriving (Eq, Show)
 
 data StringExpression
   = ToS NumericExpression
   | StrLiteral String
   | StrVariable (PVar 'PStr)
-  | StrBinOp StrBinOp StringExpression
-                 StringExpression
+  | StrBinOp StrBinOp
+             StringExpression
+             StringExpression
   deriving (Eq, Show)
 
 data Statement
