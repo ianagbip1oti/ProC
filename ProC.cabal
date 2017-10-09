@@ -18,6 +18,7 @@ library
                        ProC.Interpreter.Context,
                        ProC.Language,
                        ProC.Parser,
+                       ProC.Parser.BlnExpression,
                        ProC.Parser.Lexer,
                        ProC.Parser.NumericExpression,
                        ProC.Parser.ProC,

@@ -4,6 +4,7 @@ module ProC.Parser.Statement
   ) where
 
 import           ProC.Language
+import           ProC.Parser.BlnExpression
 import           ProC.Parser.Lexer
 import           ProC.Parser.NumericExpression
 import           ProC.Parser.ProC
@@ -34,6 +35,10 @@ varDeclStatement res exprP decl typ = do
   insertVariableM name typ
   return $ decl name expr
 
+blnVarDeclStatement :: Parser Statement
+blnVarDeclStatement =
+  varDeclStatement "bln" blnExpression (BlnVarDecl . PVar) PBln
+
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement =
   varDeclStatement "int" numericExpression (IntVarDecl . PVar) PInt
@@ -47,7 +52,8 @@ noopStatement = whiteSpace >> return Noop
 
 statement :: Parser Statement
 statement =
-  printStatement <|> intVarDeclStatement <|> strVarDeclStatement <|>
+  printStatement <|> blnVarDeclStatement <|> intVarDeclStatement <|>
+  strVarDeclStatement <|>
   noopStatement
 
 statements :: Parser Statement

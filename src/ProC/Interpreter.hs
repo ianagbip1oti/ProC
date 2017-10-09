@@ -24,6 +24,10 @@ instance ToString Integer where
 class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
+instance Eval BlnExpression Bool where
+  eval (BlnLiteral b)  = return b
+  eval (BlnVariable n) = getVarM n
+
 instance Eval NumericExpression Integer where
   eval (IntLiteral i) = return i
   eval (IntVariable n) = getVarM n
@@ -44,6 +48,7 @@ instance Eval StringExpression String where
   eval (ToS n)            = toString <$> eval n
 
 exec :: Statement -> ContextM ()
+exec (BlnVarDecl n e) = eval e >>= setVarM n
 exec (IntVarDecl n e) = eval e >>= setVarM n
 exec (StrVarDecl n e) = eval e >>= setVarM n
 exec Noop             = return ()

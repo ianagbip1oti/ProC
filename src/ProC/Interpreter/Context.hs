@@ -15,7 +15,8 @@ import           Control.Monad.State
 import qualified Data.Map            as M
 
 data PValue
-  = PIntValue Integer
+  = PBlnValue Bool
+  | PIntValue Integer
   | PStrValue String
   deriving (Show)
 
@@ -23,6 +24,12 @@ class PTypeMapping a where
   type HType a :: *
   wrapValue :: PVar a -> HType a -> PValue
   unwrapValue :: (Monad m) => PVar a -> PValue -> m (HType a)
+
+instance PTypeMapping 'PBln where
+  type HType 'PBln = Bool
+  wrapValue _ = PBlnValue
+  unwrapValue _ (PBlnValue b) = return b
+  unwrapValue _ v             = fail $ "Invalid value " ++ show v
 
 instance PTypeMapping 'PInt where
   type HType 'PInt = Integer
