@@ -3,7 +3,8 @@
 {-# LANGUAGE KindSignatures #-}
 
 module ProC.Language
-  ( Identifier(..)
+  ( BlnExpression(..)
+  , Identifier(..)
   , NumericBinOp(..)
   , NumericExpression(..)
   , NumericUnaryOp(..)
@@ -19,7 +20,8 @@ module ProC.Language
 type ProCProgram = Statement
 
 data PType
-  = PInt
+  = PBln
+  | PInt
   | PStr
   deriving (Eq, Ord)
 
@@ -33,6 +35,11 @@ getIdentifier (PVar i) = i
 newtype Identifier =
   Identifier String
   deriving (Eq, Ord, Show)
+
+data BlnExpression
+  = BlnLiteral Bool
+  | BlnVariable (PVar 'PBln)
+  deriving (Eq, Show)
 
 data NumericUnaryOp =
   Negate
@@ -72,6 +79,8 @@ data Statement
   = Noop
   | Print StringExpression
   | Seq [Statement]
+  | BlnVarDecl (PVar 'PBln)
+               BlnExpression
   | IntVarDecl (PVar 'PInt)
                NumericExpression
   | StrVarDecl (PVar 'PStr)
