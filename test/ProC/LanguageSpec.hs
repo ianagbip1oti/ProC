@@ -20,7 +20,7 @@ equalsAndShow ::
   -> SpecWith ()
 equalsAndShow T = do
   it "should equal itself" $ property $ \(b :: a) -> b == b
-  it "should have consistent show" $ property $ \(b :: a) -> show b == show b
+  it "should have consistent show" $ property $ \(b :: a) -> showList [b] "" == showList [b] ""
 
 spec :: Spec
 spec = do
