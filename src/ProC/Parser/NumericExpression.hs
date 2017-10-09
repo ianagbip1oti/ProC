@@ -22,12 +22,12 @@ term = parens numericExpression <|> IntLiteral <$> integer <|> var
 
 ops :: POperatorTable NumericExpression
 ops =
-  [ [Prefix (op "-" (UnaryOp Negate))]
+  [ [Prefix (op "-" (NumUnaryOp Negate))]
   , [inf "*" Multiply, inf "/" Divide]
   , [inf "+" Add, inf "-" Subtract]
   ]
   where
-    inf s o = Infix (op s (BinOp o)) AssocLeft
+    inf s o = Infix (op s (NumBinOp o)) AssocLeft
     op s o = reservedOp s >> return o
 
 numericExpression :: Parser NumericExpression

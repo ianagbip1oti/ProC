@@ -12,6 +12,7 @@ module ProC.Language
   , StringExpression(..)
   , PVar(..)
   , PType(..)
+  , StrBinOp(..)
   , getIdentifier
   ) where
 
@@ -47,18 +48,22 @@ data NumericBinOp
 data NumericExpression
   = IntLiteral Integer
   | IntVariable (PVar 'PInt)
-  | UnaryOp NumericUnaryOp
+  | NumUnaryOp NumericUnaryOp
             NumericExpression
-  | BinOp NumericBinOp
+  | NumBinOp NumericBinOp
           NumericExpression
           NumericExpression
+  deriving (Eq, Show)
+
+data StrBinOp
+  = Concat
   deriving (Eq, Show)
 
 data StringExpression
   = ToS NumericExpression
   | StrLiteral String
   | StrVariable (PVar 'PStr)
-  | StringConcat StringExpression
+  | StrBinOp StrBinOp StringExpression
                  StringExpression
   deriving (Eq, Show)
 
