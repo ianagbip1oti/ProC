@@ -25,8 +25,11 @@ class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
 instance Eval BlnExpression Bool where
-  eval (BlnLiteral b)  = return b
-  eval (BlnVariable n) = getVarM n
+  eval (BlnLiteral b)     = return b
+  eval (BlnVariable n)    = getVarM n
+  eval (BlnUnaryOp Not b) = not <$> eval b
+  eval (BlnBinOp And l r) = (&&) <$> eval l <*> eval r
+  eval (BlnBinOp Or l r)  = (||) <$> eval l <*> eval r
 
 instance Eval NumericExpression Integer where
   eval (IntLiteral i) = return i
