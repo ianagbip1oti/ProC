@@ -23,11 +23,7 @@ term = parens blnExpression <|> t <|> f <|> var
       return . BlnVariable $ PVar ident
 
 ops :: POperatorTable BlnExpression
-ops =
-  [ [Prefix (op "!" (BlnUnaryOp Not))]
-  , [inf "&&" And]
-  , [inf "||" Or]
-  ]
+ops = [[Prefix (op "!" (BlnUnaryOp Not))], [inf "&&" And], [inf "||" Or]]
   where
     inf s o = Infix (op s (BlnBinOp o)) AssocLeft
     op s o = reservedOp s >> return o
