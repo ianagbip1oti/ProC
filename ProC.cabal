@@ -46,6 +46,7 @@ test-suite spec
   other-modules:       ProC.LanguageInstances
                        ProC.LanguageSpec,
                        ProC.ParserSpec,
+                       ProC.Parser.BlnExpressionSpec,
                        ProC.Parser.NumericExpressionSpec,
                        ProC.Parser.StatementSpec,
                        ProC.Parser.StringExpressionSpec,
