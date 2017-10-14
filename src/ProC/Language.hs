@@ -4,6 +4,8 @@
 
 module ProC.Language
   ( BlnExpression(..)
+  , BlnUnaryOp(..)
+  , BlnBinOp(..)
   , Identifier(..)
   , NumericBinOp(..)
   , NumericExpression(..)
@@ -36,9 +38,15 @@ newtype Identifier =
   Identifier String
   deriving (Eq, Ord, Show)
 
+data BlnUnaryOp = Not deriving (Eq, Show)
+
+data BlnBinOp = And | Or deriving (Eq, Show)
+
 data BlnExpression
   = BlnLiteral Bool
   | BlnVariable (PVar 'PBln)
+  | BlnUnaryOp BlnUnaryOp BlnExpression
+  | BlnBinOp BlnBinOp BlnExpression BlnExpression
   deriving (Eq, Show)
 
 data NumericUnaryOp =

@@ -22,5 +22,15 @@ term = parens blnExpression <|> t <|> f <|> var
       unless isValid $ fail ("Not bln variable: " ++ show ident)
       return . BlnVariable $ PVar ident
 
+ops :: POperatorTable BlnExpression
+ops =
+  [ [Prefix (op "!" (BlnUnaryOp Not))]
+  , [inf "&&" And]
+  , [inf "||" Or]
+  ]
+  where
+    inf s o = Infix (op s (BlnBinOp o)) AssocLeft
+    op s o = reservedOp s >> return o
+
 blnExpression :: Parser BlnExpression
-blnExpression = buildExpressionParser [] term
+blnExpression = buildExpressionParser ops term
