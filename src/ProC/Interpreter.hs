@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds              #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
@@ -24,12 +25,12 @@ instance ToString Integer where
 class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
-instance Eval BlnExpression Bool where
-  eval (BlnLiteral b)     = return b
-  eval (BlnVariable n)    = getVarM n
-  eval (BlnUnaryOp Not b) = not <$> eval b
-  eval (BlnBinOp And l r) = (&&) <$> eval l <*> eval r
-  eval (BlnBinOp Or l r)  = (||) <$> eval l <*> eval r
+instance Eval (Expression 'PBln) Bool where
+  eval (Literal b)        = return b
+  eval (Variable n)       = getVarM n
+  eval (UnaryOp Not b)    = not <$> eval b
+  eval (BinaryOp And l r) = (&&) <$> eval l <*> eval r
+  eval (BinaryOp Or l r)  = (||) <$> eval l <*> eval r
 
 instance Eval NumericExpression Integer where
   eval (IntLiteral i) = return i
