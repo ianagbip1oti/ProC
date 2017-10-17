@@ -15,7 +15,7 @@ spec = do
   describe "intVarDeclStatement" $ do
     it "should parse int var decl" $
       parse statement "int a = 1" `shouldBe`
-      Right (IntVarDecl (PVar (Identifier "a")) (IntLiteral 1))
+      Right (IntVarDecl (PVar (Identifier "a")) (Literal 1))
     it "should fail two vars same name" $
       parse statements "int a = 1; int a = 1;" `shouldSatisfy` isLeft
   describe "strVarDeclStatement" $ do

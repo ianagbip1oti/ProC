@@ -11,7 +11,6 @@ module ProC.Language
   , Expression(..)
   , Identifier(..)
   , NumericBinOp(..)
-  , NumericExpression(..)
   , NumericUnaryOp(..)
   , ProCProgram
   , Statement(..)
@@ -51,6 +50,11 @@ instance ExpressionType 'PBln where
   type UnaryOpType 'PBln = BlnUnaryOp
   type BinaryOpType 'PBln = BlnBinOp
 
+instance ExpressionType 'PInt where
+  type LiteralType 'PInt = Integer
+  type UnaryOpType 'PInt = NumericUnaryOp
+  type BinaryOpType 'PInt = NumericBinOp
+
 data Expression (a :: PType) where
   Literal :: LiteralType a -> Expression a
   Variable :: PVar a -> Expression a
@@ -86,22 +90,12 @@ data NumericBinOp
   | Divide
   deriving (Eq, Show)
 
-data NumericExpression
-  = IntLiteral Integer
-  | IntVariable (PVar 'PInt)
-  | NumUnaryOp NumericUnaryOp
-               NumericExpression
-  | NumBinOp NumericBinOp
-             NumericExpression
-             NumericExpression
-  deriving (Eq, Show)
-
 data StrBinOp =
   Concat
   deriving (Eq, Show)
 
 data StringExpression
-  = ToS NumericExpression
+  = ToS (Expression 'PInt)
   | StrLiteral String
   | StrVariable (PVar 'PStr)
   | StrBinOp StrBinOp
@@ -116,7 +110,7 @@ data Statement
   | BlnVarDecl (PVar 'PBln)
                (Expression 'PBln)
   | IntVarDecl (PVar 'PInt)
-               NumericExpression
+               (Expression 'PInt)
   | StrVarDecl (PVar 'PStr)
                StringExpression
   deriving (Eq, Show)

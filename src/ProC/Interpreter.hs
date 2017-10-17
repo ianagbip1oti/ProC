@@ -32,11 +32,11 @@ instance Eval (Expression 'PBln) Bool where
   eval (BinaryOp And l r) = (&&) <$> eval l <*> eval r
   eval (BinaryOp Or l r)  = (||) <$> eval l <*> eval r
 
-instance Eval NumericExpression Integer where
-  eval (IntLiteral i) = return i
-  eval (IntVariable n) = getVarM n
-  eval (NumUnaryOp Negate e) = negate <$> eval e
-  eval (NumBinOp o l r) =
+instance Eval (Expression 'PInt) Integer where
+  eval (Literal i) = return i
+  eval (Variable n) = getVarM n
+  eval (UnaryOp Negate e) = negate <$> eval e
+  eval (BinaryOp o l r) =
     case o of
       Add      -> op (+) l r
       Subtract -> op (-) l r
