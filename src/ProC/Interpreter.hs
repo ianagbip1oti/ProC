@@ -5,7 +5,7 @@
 {-# LANGUAGE TypeSynonymInstances   #-}
 
 module ProC.Interpreter
-  ( run
+  ( runProC
   ) where
 
 import           ProC.Interpreter.Context
@@ -59,5 +59,5 @@ exec Noop             = return ()
 exec (Print s)        = eval s >>= liftIO . putStrLn
 exec (Seq ss)         = forM_ ss exec
 
-run :: ProCProgram -> IO ()
-run p = evalContextM (exec p)
+runProC :: ProCProgram -> IO ()
+runProC p = evalContextM (exec p)

@@ -43,7 +43,8 @@ test-suite spec
   main-is:             Spec.hs
   -- no-warn-orphans: Orphan instances of Arbitrary are too useful
   ghc-options:         -Wall -fwarn-tabs -Werror -fno-warn-orphans
-  other-modules:       ProC.LanguageInstances
+  other-modules:       ProC.InterpreterSpec,
+                       ProC.LanguageInstances,
                        ProC.LanguageSpec,
                        ProC.ParserSpec,
                        ProC.Parser.BlnExpressionSpec,
@@ -54,4 +55,6 @@ test-suite spec
   build-depends:       base == 4.9.1.0,
                        hspec == 2.4.4,
                        ProC,
+                       raw-strings-qq == 1.1,
+                       silently == 1.2.5,
                        QuickCheck == 2.9.2
