@@ -29,7 +29,7 @@ procDef =
   , Token.identStart = letter
   , Token.identLetter = alphaNum
   , Token.reservedNames = ["fls", "int", "print", "str", "tru"]
-  , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/"]
+  , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/", "!", "&&", "||"]
   }
 
 lexer :: Token.GenTokenParser String u Identity

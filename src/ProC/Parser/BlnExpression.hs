@@ -1,3 +1,6 @@
+{-# LANGUAGE DataKinds  #-}
+{-# LANGUAGE TypeInType #-}
+
 module ProC.Parser.BlnExpression
   ( blnExpression
   ) where
@@ -11,22 +14,22 @@ import           Control.Monad
 
 import           Text.Parsec.Expr
 
-term :: Parser BlnExpression
+term :: Parser (Expression 'PBln)
 term = parens blnExpression <|> t <|> f <|> var
   where
-    t = reserved "tru" >> return (BlnLiteral True)
-    f = reserved "fls" >> return (BlnLiteral False)
+    t = reserved "tru" >> return (Literal True)
+    f = reserved "fls" >> return (Literal False)
     var = do
       ident <- identifier
       isValid <- isOfTypeM PBln ident
       unless isValid $ fail ("Not bln variable: " ++ show ident)
-      return . BlnVariable $ PVar ident
+      return . Variable $ PVar ident
 
-ops :: POperatorTable BlnExpression
-ops = [[Prefix (op "!" (BlnUnaryOp Not))], [inf "&&" And], [inf "||" Or]]
+ops :: POperatorTable (Expression 'PBln)
+ops = [[Prefix (op "!" (UnaryOp Not))], [inf "&&" And], [inf "||" Or]]
   where
-    inf s o = Infix (op s (BlnBinOp o)) AssocLeft
+    inf s o = Infix (op s (BinaryOp o)) AssocLeft
     op s o = reservedOp s >> return o
 
-blnExpression :: Parser BlnExpression
+blnExpression :: Parser (Expression 'PBln)
 blnExpression = buildExpressionParser ops term

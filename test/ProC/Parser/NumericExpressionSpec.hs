@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+
 module ProC.Parser.NumericExpressionSpec
   ( spec
   ) where
@@ -19,20 +21,20 @@ formatBinOp Subtract = "-"
 formatBinOp Multiply = "*"
 formatBinOp Divide   = "/"
 
-one :: NumericExpression
-one = IntLiteral 1
+one :: Expression 'PInt
+one = Literal 1
 
 spec :: Spec
 spec =
   describe "term" $ do
     it "should parse positive int literals" $ property $ \i ->
-      i > 0 ==> parse numericExpression (show i) == Right (IntLiteral i)
+      i > 0 ==> parse numericExpression (show i) == Right (Literal i)
     it "should parse negative int literals" $ property $ \i ->
       i < 0 ==> parse numericExpression (show i) ==
-      Right (NumUnaryOp Negate (IntLiteral (-i)))
+      Right (UnaryOp Negate (Literal (-i)))
     it "should parse binary ops" $ property $ \op ->
       parse numericExpression ("1 " ++ formatBinOp op ++ " 1") `shouldBe`
-      Right (NumBinOp op one one)
+      Right (BinaryOp op one one)
     it "should parse int variables" $ parse statements "int a=1; int b=a*1+a;" `shouldSatisfy`
       isRight
     it "shold fail with str variable" $

@@ -22,13 +22,12 @@ spec :: Spec
 spec =
   describe "term" $ do
     it "should parse literals" $
-      property $ \b ->
-        parse blnExpression (formatBool b) == Right (BlnLiteral b)
+      property $ \b -> parse blnExpression (formatBool b) == Right (Literal b)
     it "should parse binary ops" $
       property $ \o l r ->
         parse blnExpression (formatBool l ++ formatBinOp o ++ formatBool r) ==
-        Right (BlnBinOp o (BlnLiteral l) (BlnLiteral r))
+        Right (BinaryOp o (Literal l) (Literal r))
     it "should parse unary op" $
       property $ \b ->
         parse blnExpression ("! " ++ formatBool b) ==
-        Right (BlnUnaryOp Not (BlnLiteral b))
+        Right (UnaryOp Not (Literal b))
