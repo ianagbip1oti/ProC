@@ -13,4 +13,4 @@ main = do
   input <- readFile inputFile
   case parseProC input of
     (Left e)  -> print e
-    (Right p) -> run p
+    (Right p) -> runProC p
