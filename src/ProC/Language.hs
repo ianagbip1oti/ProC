@@ -106,6 +106,7 @@ data StringExpression
 data Statement
   = Noop
   | Print StringExpression
+  | Block [Statement]
   | Seq [Statement]
   | BlnVarDecl (PVar 'PBln)
                (Expression 'PBln)

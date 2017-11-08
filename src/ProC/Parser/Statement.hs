@@ -28,7 +28,7 @@ varDeclStatement ::
 varDeclStatement res exprP decl typ = do
   reserved res
   name <- identifier
-  defined <- isDefinedM name
+  defined <- isDefinedInCurrentScopeM name
   when defined . fail $ "Already defined: " ++ show name
   reservedOp "="
   expr <- exprP
@@ -47,6 +47,10 @@ strVarDeclStatement :: Parser Statement
 strVarDeclStatement =
   varDeclStatement "str" stringExpression (StrVarDecl . PVar) PStr
 
+blockStatement :: Parser Statement
+blockStatement =
+  fmap Block (enterBlockM *> braces (many1 (statement <* semi)) <* exitBlockM)
+
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
 
@@ -60,6 +64,6 @@ statements :: Parser Statement
 statements = do
   whiteSpace
     -- TODO: We allow input that doens't finish with a final ;
-  list <- semiSep1 statement
+  list <- many1 (blockStatement <|> statement <* semi)
   eof
   return $ Seq list
