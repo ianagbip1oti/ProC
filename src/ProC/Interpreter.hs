@@ -58,6 +58,7 @@ exec (StrVarDecl n e) = eval e >>= setVarM n
 exec Noop             = return ()
 exec (Print s)        = eval s >>= liftIO . putStrLn
 exec (Seq ss)         = forM_ ss exec
+exec (Block ss)       = enterBlockM >> forM_ ss exec >> exitBlockM
 
 runProC :: ProCProgram -> IO ()
 runProC p = evalContextM (exec p)

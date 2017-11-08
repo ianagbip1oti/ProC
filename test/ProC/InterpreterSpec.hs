@@ -26,3 +26,17 @@ spec = do
     run [r| print("Hello World"); |] `shouldReturn` "Hello World\n"
   it "should follow order of operations" $
     run [r| print(tos(2 + 2 * 3)); |] `shouldReturn` "8\n"
+  it "should support reference variables in outer scope" $
+    run [r| int a=3; { print(tos(a)); } |] `shouldReturn` "3\n"
+  it "should support shadowing in blocks" $
+    run
+      [r|
+        int a=3;
+        print(tos(a));
+        {
+          int a=4;
+          print(tos(a));
+        }
+        print(tos(a));
+      |] `shouldReturn`
+    "3\n4\n3\n"

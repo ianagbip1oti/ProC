@@ -1,5 +1,6 @@
 module ProC.Parser.Lexer
-  ( identifier
+  ( braces
+  , identifier
   , integer
   , parens
   , reserved
@@ -31,6 +32,9 @@ procDef =
   , Token.reservedNames = ["fls", "int", "print", "str", "tru"]
   , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/", "!", "&&", "||"]
   }
+
+braces :: Parser a -> Parser a
+braces = Token.braces lexer
 
 lexer :: Token.GenTokenParser String u Identity
 lexer = Token.makeTokenParser procDef

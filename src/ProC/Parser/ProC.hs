@@ -1,9 +1,11 @@
 module ProC.Parser.ProC
   ( Parser
   , POperatorTable
-  , isDefinedM
+  , isDefinedInCurrentScopeM
   , isOfTypeM
   , insertVariableM
+  , enterBlockM
+  , exitBlockM
   , parse
   ) where
 
@@ -14,36 +16,51 @@ import           Data.Set              (Set)
 import qualified Data.Set              as Set
 
 import           Text.Parsec           (ParseError, Parsec, getState,
-                                        modifyState, runParser)
+                                        modifyState, putState, runParser)
 import           Text.Parsec.Expr
 
-newtype ParseContext = ParseContext
-  { variables :: Set (Identifier, PType)
+data ParseContext = ParseContext
+  { parent    :: Maybe ParseContext
+  , variables :: Set (Identifier, PType)
   }
 
 insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
 insertVariable v t c =
-  ParseContext {variables = Set.insert (v, t) (variables c)}
+  ParseContext {parent = parent c, variables = Set.insert (v, t) (variables c)}
 
-isDefined :: Identifier -> ParseContext -> Bool
-isDefined v c = any (\i -> v == fst i) (variables c)
+isDefinedInCurrentScope :: Identifier -> ParseContext -> Bool
+isDefinedInCurrentScope v c = any (\i -> v == fst i) (variables c)
 
 isOfType :: PType -> Identifier -> ParseContext -> Bool
-isOfType t i c = Set.member (i, t) (variables c)
+isOfType t i c = inCurrentScope || maybe False (isOfType t i) (parent c)
+  where
+    inCurrentScope = Set.member (i, t) (variables c)
 
 empty :: ParseContext
-empty = ParseContext Set.empty
+empty = ParseContext Nothing Set.empty
+
+enterBlock :: ParseContext -> ParseContext
+enterBlock c = ParseContext {parent = Just c, variables = Set.empty}
+
+exitBlock :: (Monad m) => ParseContext -> m ParseContext
+exitBlock c = maybe (fail "Attempt to exit top level block") return (parent c)
 
 type Parser = Parsec String ParseContext
 
 insertVariableM :: Identifier -> PType -> Parser ()
 insertVariableM v t = modifyState $ insertVariable v t
 
-isDefinedM :: Identifier -> Parser Bool
-isDefinedM v = isDefined v <$> getState
+isDefinedInCurrentScopeM :: Identifier -> Parser Bool
+isDefinedInCurrentScopeM v = isDefinedInCurrentScope v <$> getState
 
 isOfTypeM :: PType -> Identifier -> Parser Bool
 isOfTypeM t i = isOfType t i <$> getState
+
+enterBlockM :: Parser ()
+enterBlockM = modifyState enterBlock
+
+exitBlockM :: Parser ()
+exitBlockM = getState >>= exitBlock >>= putState
 
 type POperatorTable a = OperatorTable String ParseContext Identity a
 
