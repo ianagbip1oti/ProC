@@ -49,8 +49,7 @@ strVarDeclStatement =
 
 blockStatement :: Parser Statement
 blockStatement =
-  enterBlockM *> braces (many1 (statement <* semi)) <* exitBlockM >>=
-  return . Block
+  fmap Block (enterBlockM *> braces (many1 (statement <* semi)) <* exitBlockM)
 
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop

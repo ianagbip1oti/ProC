@@ -59,7 +59,7 @@ enterBlock c = Context {parent = Just c, variables = M.empty}
 exitBlock :: (Monad m) => Context -> m Context
 exitBlock c =
   case parent c of
-    Nothing -> fail $ "Exited topmost Context"
+    Nothing -> fail "Exited topmost Context"
     Just p  -> return p
 
 getVar :: (Monad m, PTypeMapping p) => PVar p -> Context -> m (HType p)
