@@ -3,16 +3,19 @@
 
 module ProC.Parser.BlnExpression
   ( blnExpression
+  , checkExpression
   ) where
 
 import           ProC.Language
 import           ProC.Parser.Lexer
+import           ProC.Parser.NumericExpression
 import           ProC.Parser.ProC
 
 import           Control.Applicative
 import           Control.Monad
 
 import           Text.Parsec.Expr
+import           Text.Parsec.Prim              (try)
 
 term :: Parser (Expression 'PBln)
 term = parens blnExpression <|> t <|> f <|> var
@@ -33,3 +36,22 @@ ops = [[Prefix (op "!" (UnaryOp Not))], [inf "&&" And], [inf "||" Or]]
 
 blnExpression :: Parser (Expression 'PBln)
 blnExpression = buildExpressionParser ops term
+
+comparisonExpression :: Parser ComparisonExpression
+comparisonExpression = do
+  lhs <- numericExpression
+  op <-
+    tryOp "==" NumericEq <|> tryOp "!=" NumericNotEq <|> tryOp "<=" NumericLTE <|>
+    tryOp "<" NumericLT <|>
+    tryOp ">=" NumericGTE <|>
+    tryOp ">" NumericGT
+  rhs <- numericExpression
+  return $ PIntCompare op lhs rhs
+  where
+    tryOp o r = reservedOp o >> return r
+
+checkExpression :: Parser Check
+checkExpression = try blnExpr <|> compExpr
+  where
+    blnExpr = CheckE <$> blnExpression
+    compExpr = CheckC <$> comparisonExpression

@@ -1,6 +1,9 @@
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
+{-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE GADTs                #-}
+{-# LANGUAGE PolyKinds            #-}
+{-# LANGUAGE RankNTypes           #-}
 {-# LANGUAGE StandaloneDeriving   #-}
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -8,9 +11,12 @@
 module ProC.Language
   ( BlnUnaryOp(..)
   , BlnBinOp(..)
+  , Check(..)
+  , ComparisonExpression(..)
   , Expression(..)
   , Identifier(..)
   , NumericBinOp(..)
+  , NumericComparisonOp(..)
   , NumericUnaryOp(..)
   , ProCProgram
   , Statement(..)
@@ -90,6 +96,15 @@ data NumericBinOp
   | Divide
   deriving (Eq, Show)
 
+data NumericComparisonOp
+  = NumericEq
+  | NumericNotEq
+  | NumericGT
+  | NumericGTE
+  | NumericLT
+  | NumericLTE
+  deriving (Eq, Show)
+
 data StrBinOp =
   Concat
   deriving (Eq, Show)
@@ -103,15 +118,28 @@ data StringExpression
              StringExpression
   deriving (Eq, Show)
 
-data Statement
-  = Noop
-  | Print StringExpression
-  | Block [Statement]
-  | Seq [Statement]
-  | BlnVarDecl (PVar 'PBln)
-               (Expression 'PBln)
-  | IntVarDecl (PVar 'PInt)
-               (Expression 'PInt)
-  | StrVarDecl (PVar 'PStr)
-               StringExpression
+data ComparisonExpression where
+  PIntCompare
+    :: NumericComparisonOp
+    -> Expression 'PInt
+    -> Expression 'PInt
+    -> ComparisonExpression
   deriving (Eq, Show)
+
+data Check
+  = CheckE (Expression 'PBln)
+  | CheckC ComparisonExpression
+  deriving (Eq, Show)
+
+data Statement where
+  Noop :: Statement
+  Print :: StringExpression -> Statement
+  Block :: [Statement] -> Statement
+  Seq :: [Statement] -> Statement
+  BlnVarDecl :: PVar 'PBln -> Check -> Statement
+  IntVarDecl :: PVar 'PInt -> Expression 'PInt -> Statement
+  StrVarDecl :: PVar 'PStr -> StringExpression -> Statement
+
+deriving instance Eq Statement
+
+deriving instance Show Statement

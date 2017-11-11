@@ -37,7 +37,7 @@ varDeclStatement res exprP decl typ = do
 
 blnVarDeclStatement :: Parser Statement
 blnVarDeclStatement =
-  varDeclStatement "bln" blnExpression (BlnVarDecl . PVar) PBln
+  varDeclStatement "bln" checkExpression (BlnVarDecl . PVar) PBln
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement =
