@@ -25,6 +25,20 @@ instance ToString Integer where
 class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
+instance Eval Check Bool where
+  eval (CheckE e) = eval e
+  eval (CheckC c) = eval c
+
+instance Eval ComparisonExpression Bool where
+  eval (PIntCompare o l r) = op o <$> eval l <*> eval r
+    where
+      op NumericEq = (==)
+      op NumericNotEq = (/=)
+      op NumericGT = (>)
+      op NumericGTE = (>=)
+      op NumericLT = (<)
+      op NumericLTE = (<=)
+
 instance Eval (Expression 'PBln) Bool where
   eval (Literal b)        = return b
   eval (Variable n)       = getVarM n
