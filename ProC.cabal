@@ -17,6 +17,7 @@ library
   exposed-modules:     ProC.Interpreter,
                        ProC.Interpreter.Context,
                        ProC.Language,
+                       ProC.Language.PType,
                        ProC.Parser,
                        ProC.Parser.BlnExpression,
                        ProC.Parser.Lexer,

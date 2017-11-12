@@ -6,7 +6,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module ProC.Language
-  ( BlnUnaryOp(..)
+  ( module ProC.Language.PType, BlnUnaryOp(..)
   , BlnBinOp(..)
   , Expression(..)
   , Identifier(..)
@@ -16,18 +16,13 @@ module ProC.Language
   , Statement(..)
   , StringExpression(..)
   , PVar(..)
-  , PType(..)
   , StrBinOp(..)
   , getIdentifier
   ) where
 
-type ProCProgram = Statement
+import ProC.Language.PType
 
-data PType
-  = PBln
-  | PInt
-  | PStr
-  deriving (Eq, Ord)
+type ProCProgram = Statement
 
 data PVar :: PType -> * where
   PVar :: Identifier -> PVar a
