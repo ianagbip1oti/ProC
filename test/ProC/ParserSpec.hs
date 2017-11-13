@@ -16,39 +16,35 @@ spec =
   describe "parseProC" $ do
     it "parses Hello World" $
       parseProC [r| print("Hello World"); |] `shouldBe`
-      Right (Seq [Print (StrLiteral "Hello World")])
+      Right (Seq [Print (PStrLiteral "Hello World")])
     it "parses blocks" $
       parseProC [r| { print("Hello World"); } |] `shouldBe`
-      Right (Seq [Block [Print (StrLiteral "Hello World")]])
+      Right (Seq [Block [Print (PStrLiteral "Hello World")]])
     it "allows references to outer scopes" $
       parseProC [r| int a=0; { int b=a; } |] `shouldBe`
       Right
         (Seq
-           [ IntVarDecl (PVar (Identifier "a")) (Literal 0)
-           , Block
-               [ IntVarDecl
-                   (PVar (Identifier "b"))
-                   (Variable (PVar (Identifier "a")))
-               ]
+           [ IntVarDecl (Identifier "a") (PIntLiteral 0)
+           , Block [IntVarDecl (Identifier "b") (PIntVariable (Identifier "a"))]
            ])
     it "allows shadowing in blocks" $
       parseProC [r| int a=0; { int a=1; } |] `shouldBe`
       Right
         (Seq
-           [ IntVarDecl (PVar (Identifier "a")) (Literal 0)
-           , Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
+           [ IntVarDecl (Identifier "a") (PIntLiteral 0)
+           , Block [IntVarDecl (Identifier "a") (PIntLiteral 1)]
            ])
     it "allows statements after blocks" $
       parseProC [r| { int a=1; } print("Hello World"); |] `shouldBe`
       Right
         (Seq
-           [ Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
-           , Print (StrLiteral "Hello World")
+           [ Block [IntVarDecl (Identifier "a") (PIntLiteral 1)]
+           , Print (PStrLiteral "Hello World")
            ])
     it "allows shadowing after blocks" $
       parseProC [r| { int a=1; } int a=0; |] `shouldBe`
       Right
         (Seq
-           [ Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
-           , IntVarDecl (PVar (Identifier "a")) (Literal 0)
+           [ Block [IntVarDecl (Identifier "a") (PIntLiteral 1)]
+           , IntVarDecl (Identifier "a") (PIntLiteral 0)
            ])

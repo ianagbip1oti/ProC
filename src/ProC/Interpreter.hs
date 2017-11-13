@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds              #-}
 {-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses  #-}
@@ -25,18 +24,18 @@ instance ToString Integer where
 class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
-instance Eval (Expression 'PBln) Bool where
-  eval (Literal b)        = return b
-  eval (Variable n)       = getVarM n
-  eval (UnaryOp Not b)    = not <$> eval b
-  eval (BinaryOp And l r) = (&&) <$> eval l <*> eval r
-  eval (BinaryOp Or l r)  = (||) <$> eval l <*> eval r
+instance Eval PBlnExpression Bool where
+  eval (PBlnLiteral b)      = return b
+  eval (PBlnVariable n)     = getVarM n
+  eval (PBlnUnrOpr Not b)   = not <$> eval b
+  eval (PBlnBinOpr And l r) = (&&) <$> eval l <*> eval r
+  eval (PBlnBinOpr Or l r)  = (||) <$> eval l <*> eval r
 
-instance Eval (Expression 'PInt) Integer where
-  eval (Literal i) = return i
-  eval (Variable n) = getVarM n
-  eval (UnaryOp Negate e) = negate <$> eval e
-  eval (BinaryOp o l r) =
+instance Eval PIntExpression Integer where
+  eval (PIntLiteral i) = return i
+  eval (PIntVariable n) = getVarM n
+  eval (PIntUnrOpr Negate e) = negate <$> eval e
+  eval (PIntBinOpr o l r) =
     case o of
       Add      -> op (+) l r
       Subtract -> op (-) l r
@@ -45,11 +44,11 @@ instance Eval (Expression 'PInt) Integer where
     where
       op f x y = f <$> eval x <*> eval y
 
-instance Eval StringExpression String where
-  eval (StrLiteral s)        = return s
-  eval (StrVariable s)       = getVarM s
-  eval (StrBinOp Concat l r) = (++) <$> eval l <*> eval r
-  eval (ToS n)               = toString <$> eval n
+instance Eval PStrExpression String where
+  eval (PStrLiteral s)         = return s
+  eval (PStrVariable s)        = getVarM s
+  eval (PStrBinOpr Concat l r) = (++) <$> eval l <*> eval r
+  eval (ToS n)                 = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (BlnVarDecl n e) = eval e >>= setVarM n

@@ -24,5 +24,5 @@ equalsAndShow T = do
 
 spec :: Spec
 spec = do
-  describe "NumericBinOp" $ equalsAndShow @NumericBinOp T
-  describe "StrBinOp" $ equalsAndShow @StrBinOp T
+  describe "NumericBinOp" $ equalsAndShow @PIntBinOpr T
+  describe "StrBinOp" $ equalsAndShow @PStrBinOpr T
