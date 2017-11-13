@@ -12,6 +12,8 @@ module ProC.Data.HierarchicalMap
   , lookup
   ) where
 
+import           Prelude      hiding (lookup)
+
 import           Control.Lens
 
 import qualified Data.Map     as M
