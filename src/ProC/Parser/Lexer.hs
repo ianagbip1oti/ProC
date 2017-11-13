@@ -30,7 +30,23 @@ procDef =
   , Token.identStart = letter
   , Token.identLetter = alphaNum
   , Token.reservedNames = ["fls", "int", "print", "str", "tru"]
-  , Token.reservedOpNames = ["=", "++", "+", "-", "*", "/", "!", "&&", "||"]
+  , Token.reservedOpNames =
+      [ "="
+      , "++"
+      , "+"
+      , "-"
+      , "*"
+      , "/"
+      , "!"
+      , "&&"
+      , "||"
+      , "=="
+      , "!="
+      , ">="
+      , ">"
+      , "<="
+      , "<"
+      ]
   }
 
 braces :: Parser a -> Parser a
