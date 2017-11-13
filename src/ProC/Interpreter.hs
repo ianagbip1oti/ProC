@@ -61,11 +61,11 @@ instance Eval PStrExpression String where
   eval (ToS n)                 = toString <$> eval n
 
 exec :: Statement -> ContextM ()
-exec (PBlnVarDcl n e) = eval e >>= setVarM n
+exec (PBlnVarDcl n e) = eval e >>= declareVarM n
 exec (PBlnVarAss n e) = eval e >>= setVarM n
-exec (PIntVarDcl n e) = eval e >>= setVarM n
+exec (PIntVarDcl n e) = eval e >>= declareVarM n
 exec (PIntVarAss n e) = eval e >>= setVarM n
-exec (PStrVarDcl n e) = eval e >>= setVarM n
+exec (PStrVarDcl n e) = eval e >>= declareVarM n
 exec (PStrVarAss n e) = eval e >>= setVarM n
 exec Noop             = return ()
 exec (Print s)        = eval s >>= liftIO . putStrLn

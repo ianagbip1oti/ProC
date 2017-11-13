@@ -30,6 +30,9 @@ spec = do
     run [r| str a="a"; print(a); a="b"; print(a); |] `shouldReturn` "a\nb\n"
   it "should support reference variables in outer scope" $
     run [r| int a=3; { print(tos(a)); } |] `shouldReturn` "3\n"
+  it "should support assign variables in outer scope" $
+    run [r| int a=0; { a=a+1; print(tos(a)); } print(tos(a)); |] `shouldReturn`
+    "1\n1\n"
   it "should support shadowing in blocks" $
     run
       [r|
@@ -42,7 +45,7 @@ spec = do
         print(tos(a));
       |] `shouldReturn`
     "3\n4\n3\n"
-  it "supports while loops" $
+  it "supports non execute while loops" $
     run
       [r|
         int a = 0;
