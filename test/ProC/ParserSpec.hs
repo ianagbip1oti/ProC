@@ -48,3 +48,6 @@ spec =
            [ Block [IntVarDcl (Identifier "a") (PIntLiteral 1)]
            , IntVarDcl (Identifier "a") (PIntLiteral 0)
            ])
+    it "parses whl loops" $
+      parseProC [r| whl (tru) { print("Hello World"); } |] `shouldBe`
+      Right (Seq [Whl (PBlnLiteral True) [Print (PStrLiteral "Hello World")]])

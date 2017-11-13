@@ -24,6 +24,8 @@ data Statement
   | Print PStrExpression
   | Block [Statement]
   | Seq [Statement]
+  | Whl PBlnExpression
+        [Statement]
   | BlnVarDcl Identifier
               PBlnExpression
   | IntVarDcl Identifier
