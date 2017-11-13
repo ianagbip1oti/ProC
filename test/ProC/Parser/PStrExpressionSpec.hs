@@ -1,11 +1,11 @@
-module ProC.Parser.StringExpressionSpec
+module ProC.Parser.PStrExpressionSpec
   ( spec
   ) where
 
 import           ProC.Language
 import           ProC.Parser.ProC
 import           ProC.Parser.Statement
-import           ProC.Parser.StringExpression
+import           ProC.Parser.PStrExpression
 
 import           Data.Either
 
@@ -15,8 +15,8 @@ spec :: Spec
 spec =
   describe "term" $ do
     it "parses simple string" $
-      parse stringExpression "\"a string\"" `shouldBe`
-      Right (StrLiteral "a string")
+      parse pStrExpression "\"a string\"" `shouldBe`
+      Right (PStrLiteral "a string")
     it "should parse str variables" $
       parse statements "str a=\"abc\"; str b=a++\"def\";" `shouldSatisfy`
       isRight

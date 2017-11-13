@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 
-module ProC.Parser.NumericExpression
-  ( numericExpression
+module ProC.Parser.PIntExpression
+  ( pIntExpression
   ) where
 
 import           ProC.Language
@@ -13,24 +13,24 @@ import           Control.Monad
 
 import           Text.Parsec.Expr
 
-term :: Parser (Expression 'PInt)
-term = parens numericExpression <|> Literal <$> integer <|> var
+term :: Parser PIntExpression
+term = parens pIntExpression <|> PIntLiteral <$> integer <|> var
   where
     var = do
       ident <- identifier
       isValid <- isOfTypeM PInt ident
       unless isValid $ fail ("Not int variable: " ++ show ident)
-      return $ Variable ident
+      return $ PIntVariable ident
 
-ops :: POperatorTable (Expression 'PInt)
+ops :: POperatorTable PIntExpression
 ops =
-  [ [Prefix (op "-" (UnaryOp Negate))]
+  [ [Prefix (op "-" (PIntUnrOpr Negate))]
   , [inf "*" Multiply, inf "/" Divide]
   , [inf "+" Add, inf "-" Subtract]
   ]
   where
-    inf s o = Infix (op s (BinaryOp o)) AssocLeft
+    inf s o = Infix (op s (PIntBinOpr o)) AssocLeft
     op s o = reservedOp s >> return o
 
-numericExpression :: Parser (Expression 'PInt)
-numericExpression = buildExpressionParser ops term
+pIntExpression :: Parser PIntExpression
+pIntExpression = buildExpressionParser ops term

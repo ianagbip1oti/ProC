@@ -32,11 +32,11 @@ instance Eval (Expression 'PBln) Bool where
   eval (BinaryOp And l r) = (&&) <$> eval l <*> eval r
   eval (BinaryOp Or l r)  = (||) <$> eval l <*> eval r
 
-instance Eval (Expression 'PInt) Integer where
-  eval (Literal i) = return i
-  eval (Variable n) = getVarM n
-  eval (UnaryOp Negate e) = negate <$> eval e
-  eval (BinaryOp o l r) =
+instance Eval PIntExpression Integer where
+  eval (PIntLiteral i) = return i
+  eval (PIntVariable n) = getVarM n
+  eval (PIntUnrOpr Negate e) = negate <$> eval e
+  eval (PIntBinOpr o l r) =
     case o of
       Add      -> op (+) l r
       Subtract -> op (-) l r
@@ -45,10 +45,10 @@ instance Eval (Expression 'PInt) Integer where
     where
       op f x y = f <$> eval x <*> eval y
 
-instance Eval StringExpression String where
-  eval (StrLiteral s)        = return s
-  eval (StrVariable s)       = getVarM s
-  eval (StrBinOp Concat l r) = (++) <$> eval l <*> eval r
+instance Eval PStrExpression String where
+  eval (PStrLiteral s)        = return s
+  eval (PStrVariable s)       = getVarM s
+  eval (PStrBinOpr Concat l r) = (++) <$> eval l <*> eval r
   eval (ToS n)               = toString <$> eval n
 
 exec :: Statement -> ContextM ()

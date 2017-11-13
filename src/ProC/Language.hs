@@ -6,25 +6,19 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module ProC.Language
-  ( module ProC.Language.PType, BlnUnaryOp(..)
+  ( module ProC.Language.PIntExpression
+  , module ProC.Language.PStrExpression, module ProC.Language.PType, BlnUnaryOp(..)
   , BlnBinOp(..)
   , Expression(..)
-  , Identifier(..)
-  , NumericBinOp(..)
-  , NumericUnaryOp(..)
   , ProCProgram
   , Statement(..)
-  , StringExpression(..)
-  , StrBinOp(..)
   ) where
 
+import ProC.Language.PIntExpression
+import ProC.Language.PStrExpression
 import ProC.Language.PType
 
 type ProCProgram = Statement
-
-newtype Identifier =
-  Identifier String
-  deriving (Eq, Ord, Show)
 
 class ExpressionType (a :: PType) where
   type LiteralType a :: *
@@ -35,11 +29,6 @@ instance ExpressionType 'PBln where
   type LiteralType 'PBln = Bool
   type UnaryOpType 'PBln = BlnUnaryOp
   type BinaryOpType 'PBln = BlnBinOp
-
-instance ExpressionType 'PInt where
-  type LiteralType 'PInt = Integer
-  type UnaryOpType 'PInt = NumericUnaryOp
-  type BinaryOpType 'PInt = NumericBinOp
 
 data Expression (a :: PType) where
   Literal :: LiteralType a -> Expression a
@@ -65,39 +54,15 @@ data BlnBinOp
   | Or
   deriving (Eq, Show)
 
-data NumericUnaryOp =
-  Negate
-  deriving (Eq, Show)
-
-data NumericBinOp
-  = Add
-  | Subtract
-  | Multiply
-  | Divide
-  deriving (Eq, Show)
-
-data StrBinOp =
-  Concat
-  deriving (Eq, Show)
-
-data StringExpression
-  = ToS (Expression 'PInt)
-  | StrLiteral String
-  | StrVariable Identifier
-  | StrBinOp StrBinOp
-             StringExpression
-             StringExpression
-  deriving (Eq, Show)
-
 data Statement
   = Noop
-  | Print StringExpression
+  | Print PStrExpression
   | Block [Statement]
   | Seq [Statement]
   | BlnVarDecl Identifier
                (Expression 'PBln)
   | IntVarDecl Identifier
-               (Expression 'PInt)
+               PIntExpression
   | StrVarDecl Identifier
-               StringExpression
+               PStrExpression
   deriving (Eq, Show)

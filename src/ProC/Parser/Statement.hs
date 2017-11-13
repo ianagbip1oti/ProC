@@ -6,16 +6,16 @@ module ProC.Parser.Statement
 import           ProC.Language
 import           ProC.Parser.BlnExpression
 import           ProC.Parser.Lexer
-import           ProC.Parser.NumericExpression
+import           ProC.Parser.PIntExpression
 import           ProC.Parser.ProC
-import           ProC.Parser.StringExpression
+import           ProC.Parser.PStrExpression
 
 import           Control.Monad
 
 import           Text.Parsec
 
 printStatement :: Parser Statement
-printStatement = p stringExpression
+printStatement = p pStrExpression
   where
     p expr = Print <$> (reserved "print" >> parens expr)
 
@@ -41,11 +41,11 @@ blnVarDeclStatement =
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement =
-  varDeclStatement "int" numericExpression IntVarDecl PInt
+  varDeclStatement "int" pIntExpression IntVarDecl PInt
 
 strVarDeclStatement :: Parser Statement
 strVarDeclStatement =
-  varDeclStatement "str" stringExpression StrVarDecl PStr
+  varDeclStatement "str" pStrExpression StrVarDecl PStr
 
 blockStatement :: Parser Statement
 blockStatement =

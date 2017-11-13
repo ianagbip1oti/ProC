@@ -15,12 +15,12 @@ spec = do
   describe "intVarDeclStatement" $ do
     it "should parse int var decl" $
       parse statement "int a = 1" `shouldBe`
-      Right (IntVarDecl (Identifier "a") (Literal 1))
+      Right (IntVarDecl (Identifier "a") (PIntLiteral 1))
     it "should fail two vars same name" $
       parse statements "int a = 1; int a = 1;" `shouldSatisfy` isLeft
   describe "strVarDeclStatement" $ do
     it "should parse string var decl" $
       parse statement "str a = \"abc\"" `shouldBe`
-      Right (StrVarDecl (Identifier "a") (StrLiteral "abc"))
+      Right (StrVarDecl (Identifier "a") (PStrLiteral "abc"))
     it "should fail two vars same name" $
       parse statements "str a = \"a\"; str a = \"b\";" `shouldSatisfy` isLeft

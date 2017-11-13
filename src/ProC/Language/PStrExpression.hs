@@ -1,5 +1,6 @@
 module ProC.Language.PStrExpression(PStrExpression(..), PStrBinOpr(..)) where
 
+import ProC.Language.PIntExpression
 import ProC.Language.PType
 
 data PStrBinOpr =
@@ -7,12 +8,12 @@ data PStrBinOpr =
   deriving (Eq, Show)
 
 data PStrExpression
-  = ToS (Expression 'PInt)
+  = ToS PIntExpression
   | PStrLiteral String
-  | PStrVariable (PVar 'PStr)
-  | PStrBinOp PStrBinOp
-             StringExpression
-             StringExpression
+  | PStrVariable Identifier
+  | PStrBinOpr PStrBinOpr
+             PStrExpression
+             PStrExpression
   deriving (Eq, Show)
 
 
