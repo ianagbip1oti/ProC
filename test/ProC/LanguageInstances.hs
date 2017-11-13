@@ -6,7 +6,7 @@ import           ProC.Language
 
 import           Test.QuickCheck
 
-instance Arbitrary BlnBinOp where
+instance Arbitrary PBlnBinOpr where
   arbitrary = elements [And, Or]
 
 instance Arbitrary PIntBinOpr where

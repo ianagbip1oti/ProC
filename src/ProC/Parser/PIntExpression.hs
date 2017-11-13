@@ -1,5 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-
 module ProC.Parser.PIntExpression
   ( pIntExpression
   ) where

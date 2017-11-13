@@ -4,7 +4,7 @@ module ProC.Parser.Statement
   ) where
 
 import           ProC.Language
-import           ProC.Parser.BlnExpression
+import           ProC.Parser.PBlnExpression
 import           ProC.Parser.Lexer
 import           ProC.Parser.PIntExpression
 import           ProC.Parser.ProC
@@ -37,7 +37,7 @@ varDeclStatement res exprP decl typ = do
 
 blnVarDeclStatement :: Parser Statement
 blnVarDeclStatement =
-  varDeclStatement "bln" blnExpression BlnVarDecl PBln
+  varDeclStatement "bln" pBlnExpression BlnVarDecl PBln
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement =
