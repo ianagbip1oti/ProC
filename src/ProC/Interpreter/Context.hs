@@ -61,7 +61,7 @@ declareVar :: Typeable a => Identifier -> a -> Context -> Context
 declareVar idn v = variables . at idn ?~ toDyn v
 
 setVar :: Typeable a => Identifier -> a -> Context -> Context
-setVar idn v = variable idn c .~ toDyn v
+setVar idn v c = variable idn c .~ toDyn v $ c
 
 type ContextM = StateT Context IO
 
