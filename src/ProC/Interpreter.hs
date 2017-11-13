@@ -25,24 +25,34 @@ class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
 instance Eval PBlnExpression Bool where
-  eval (PBlnLiteral b)      = return b
-  eval (PBlnVariable n)     = getVarM n
-  eval (PBlnUnrOpr Not b)   = not <$> eval b
+  eval (PBlnLiteral b) = return b
+  eval (PBlnVariable n) = getVarM n
+  eval (PBlnUnrOpr Not b) = not <$> eval b
   eval (PBlnBinOpr And l r) = (&&) <$> eval l <*> eval r
-  eval (PBlnBinOpr Or l r)  = (||) <$> eval l <*> eval r
+  eval (PBlnBinOpr Or l r) = (||) <$> eval l <*> eval r
+  eval (PIntCmpOpr o l r) = op <$> eval l <*> eval r
+    where
+      op =
+        case o of
+          PIntEq    -> (==)
+          PIntNotEq -> (/=)
+          PIntGT    -> (>)
+          PIntGTE   -> (>=)
+          PIntLT    -> (<)
+          PIntLTE   -> (<=)
 
 instance Eval PIntExpression Integer where
   eval (PIntLiteral i) = return i
   eval (PIntVariable n) = getVarM n
   eval (PIntUnrOpr Negate e) = negate <$> eval e
-  eval (PIntBinOpr o l r) =
-    case o of
-      Add      -> op (+) l r
-      Subtract -> op (-) l r
-      Multiply -> op (*) l r
-      Divide   -> op div l r
+  eval (PIntBinOpr o l r) = op <$> eval l <*> eval r
     where
-      op f x y = f <$> eval x <*> eval y
+      op =
+        case o of
+          Add      -> (+)
+          Subtract -> (-)
+          Multiply -> (*)
+          Divide   -> div
 
 instance Eval PStrExpression String where
   eval (PStrLiteral s)         = return s
