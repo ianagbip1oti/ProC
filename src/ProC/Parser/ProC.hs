@@ -1,3 +1,6 @@
+{-# LANGUAGE RankNTypes      #-}
+{-# LANGUAGE TemplateHaskell #-}
+
 module ProC.Parser.ProC
   ( Parser
   , POperatorTable
@@ -12,39 +15,54 @@ module ProC.Parser.ProC
 
 import           ProC.Language
 
-import           Data.Functor.Identity
-import           Data.Set              (Set)
-import qualified Data.Set              as Set
+import Control.Lens
+
+import qualified Data.Map as M
+import Data.Maybe
 
 import           Text.Parsec           (ParseError, Parsec, getState,
                                         modifyState, putState, runParser)
 import           Text.Parsec.Expr
 
 data ParseContext = ParseContext
-  { parent    :: Maybe ParseContext
-  , variables :: Set (Identifier, PType)
+  { _parent    :: Maybe ParseContext
+  , _variables :: M.Map Identifier PType
   }
 
+makeLenses ''ParseContext
+
+varThisContext :: Identifier -> Traversal' ParseContext PType
+varThisContext idn = variables . at idn . _Just
+
+contextWith :: Identifier -> ParseContext -> Traversal' ParseContext ParseContext
+contextWith idn ctx =
+  case ctx ^? varThisContext idn of
+    Just _ -> id
+    Nothing ->
+      case ctx ^. parent of
+        Just p  -> parent . _Just . contextWith idn p
+        Nothing -> id
+
+variable :: Identifier -> ParseContext -> Traversal' ParseContext PType
+variable idn ctx = contextWith idn ctx . varThisContext idn
+
 insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
-insertVariable v t c =
-  ParseContext {parent = parent c, variables = Set.insert (v, t) (variables c)}
+insertVariable v t = variables . at v ?~ t
 
 isDefinedInCurrentScope :: Identifier -> ParseContext -> Bool
-isDefinedInCurrentScope v c = any (\i -> v == fst i) (variables c)
+isDefinedInCurrentScope v c = isJust $ c ^? varThisContext v
 
 isOfType :: PType -> Identifier -> ParseContext -> Bool
-isOfType t i c = inCurrentScope || maybe False (isOfType t i) (parent c)
-  where
-    inCurrentScope = Set.member (i, t) (variables c)
+isOfType t i c = c ^? variable i c == Just t
 
 empty :: ParseContext
-empty = ParseContext Nothing Set.empty
+empty = ParseContext Nothing M.empty
 
 enterBlock :: ParseContext -> ParseContext
-enterBlock c = ParseContext {parent = Just c, variables = Set.empty}
+enterBlock c = ParseContext {_parent = Just c, _variables = M.empty}
 
 exitBlock :: (Monad m) => ParseContext -> m ParseContext
-exitBlock c = maybe (fail "Attempt to exit top level block") return (parent c)
+exitBlock c = maybe (fail "Attempt to exit top level block") return (c ^. parent)
 
 type Parser = Parsec String ParseContext
 
