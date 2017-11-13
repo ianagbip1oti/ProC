@@ -19,13 +19,13 @@ printStatement = p pStrExpression
   where
     p expr = Print <$> (reserved "print" >> parens expr)
 
-varDeclStatement ::
+varDclStatement ::
      String
   -> Parser e
   -> (Identifier -> e -> Statement)
   -> PType
   -> Parser Statement
-varDeclStatement res exprP decl typ = do
+varDclStatement res exprP dcl typ = do
   reserved res
   name <- identifier
   defined <- isDefinedInCurrentScopeM name
@@ -33,16 +33,16 @@ varDeclStatement res exprP decl typ = do
   reservedOp "="
   expr <- exprP
   insertVariableM name typ
-  return $ decl name expr
+  return $ dcl name expr
 
-blnVarDeclStatement :: Parser Statement
-blnVarDeclStatement = varDeclStatement "bln" pBlnExpression BlnVarDecl PBln
+blnVarDclStatement :: Parser Statement
+blnVarDclStatement = varDclStatement "bln" pBlnExpression BlnVarDcl PBln
 
-intVarDeclStatement :: Parser Statement
-intVarDeclStatement = varDeclStatement "int" pIntExpression IntVarDecl PInt
+intVarDclStatement :: Parser Statement
+intVarDclStatement = varDclStatement "int" pIntExpression IntVarDcl PInt
 
-strVarDeclStatement :: Parser Statement
-strVarDeclStatement = varDeclStatement "str" pStrExpression StrVarDecl PStr
+strVarDclStatement :: Parser Statement
+strVarDclStatement = varDclStatement "str" pStrExpression StrVarDcl PStr
 
 blockStatement :: Parser Statement
 blockStatement =
@@ -53,8 +53,8 @@ noopStatement = whiteSpace >> return Noop
 
 statement :: Parser Statement
 statement =
-  printStatement <|> blnVarDeclStatement <|> intVarDeclStatement <|>
-  strVarDeclStatement <|>
+  printStatement <|> blnVarDclStatement <|> intVarDclStatement <|>
+  strVarDclStatement <|>
   noopStatement
 
 statements :: Parser Statement

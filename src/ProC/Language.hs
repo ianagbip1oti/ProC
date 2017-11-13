@@ -24,10 +24,10 @@ data Statement
   | Print PStrExpression
   | Block [Statement]
   | Seq [Statement]
-  | BlnVarDecl Identifier
-               PBlnExpression
-  | IntVarDecl Identifier
-               PIntExpression
-  | StrVarDecl Identifier
-               PStrExpression
+  | BlnVarDcl Identifier
+              PBlnExpression
+  | IntVarDcl Identifier
+              PIntExpression
+  | StrVarDcl Identifier
+              PStrExpression
   deriving (Eq, Show)
