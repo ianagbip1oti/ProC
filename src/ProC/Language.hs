@@ -26,10 +26,10 @@ data Statement
   | Seq [Statement]
   | Whl PBlnExpression
         [Statement]
-  | BlnVarDecl Identifier
-               PBlnExpression
-  | IntVarDecl Identifier
-               PIntExpression
-  | StrVarDecl Identifier
-               PStrExpression
+  | BlnVarDcl Identifier
+              PBlnExpression
+  | IntVarDcl Identifier
+              PIntExpression
+  | StrVarDcl Identifier
+              PStrExpression
   deriving (Eq, Show)
