@@ -1,7 +1,5 @@
-{-# LANGUAGE GADTs           #-}
 {-# LANGUAGE RankNTypes      #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies    #-}
 
 module ProC.Interpreter.Context
   ( ContextM
