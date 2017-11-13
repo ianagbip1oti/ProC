@@ -6,7 +6,6 @@ module ProC.Parser.Lexer
   , reserved
   , reservedOp
   , semi
-  , semiSep1
   , stringLiteral
   , symbol
   , whiteSpace
@@ -29,7 +28,7 @@ procDef =
   , Token.commentLine = "//"
   , Token.identStart = letter
   , Token.identLetter = alphaNum
-  , Token.reservedNames = ["fls", "int", "print", "str", "tru"]
+  , Token.reservedNames = ["fls", "int", "print", "str", "tru", "whl"]
   , Token.reservedOpNames =
       [ "="
       , "++"
@@ -72,9 +71,6 @@ reservedOp = Token.reservedOp lexer
 
 semi :: Parser String
 semi = Token.semi lexer
-
-semiSep1 :: Parser a -> Parser [a]
-semiSep1 = Token.semiSep1 lexer
 
 stringLiteral :: Parser String
 stringLiteral = Token.stringLiteral lexer

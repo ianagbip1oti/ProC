@@ -40,3 +40,14 @@ spec = do
         print(tos(a));
       |] `shouldReturn`
     "3\n4\n3\n"
+  it "supports while loops" $
+    run
+      [r|
+        int a = 0;
+        print ("a");
+        whl (a > 0) {
+          print("b");
+        }
+        print("c");
+      |] `shouldReturn`
+    "a\nc\n"

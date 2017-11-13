@@ -14,7 +14,7 @@ import           Text.Parsec.Expr
 import           Text.Parsec.Prim           (try)
 
 term :: Parser PBlnExpression
-term = parens pBlnExpression <|> t <|> f <|> var <|> try pIntCmpExpression
+term = parens pBlnExpression <|> try pIntCmpExpression <|> t <|> f <|> var
   where
     t = reserved "tru" >> return (PBlnLiteral True)
     f = reserved "fls" >> return (PBlnLiteral False)

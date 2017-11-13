@@ -45,8 +45,17 @@ strVarDeclStatement :: Parser Statement
 strVarDeclStatement = varDeclStatement "str" pStrExpression StrVarDecl PStr
 
 blockStatement :: Parser Statement
-blockStatement =
-  fmap Block (enterBlockM *> braces (many1 (statement <* semi)) <* exitBlockM)
+blockStatement = Block <$> block
+
+block :: Parser [Statement]
+block = inBlockM . braces . many1 $ statement <* semi
+
+whlStatement :: Parser Statement
+whlStatement = do
+  reserved "whl"
+  cond <- parens pBlnExpression
+  ss <- block
+  return $ Whl cond ss
 
 noopStatement :: Parser Statement
 noopStatement = whiteSpace >> return Noop
@@ -61,6 +70,6 @@ statements :: Parser Statement
 statements = do
   whiteSpace
     -- TODO: We allow input that doens't finish with a final ;
-  list <- many1 (blockStatement <|> statement <* semi)
+  list <- many1 (blockStatement <|> whlStatement <|> statement <* semi)
   eof
   return $ Seq list

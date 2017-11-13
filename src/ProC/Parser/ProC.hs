@@ -6,6 +6,7 @@ module ProC.Parser.ProC
   , insertVariableM
   , enterBlockM
   , exitBlockM
+  , inBlockM
   , parse
   ) where
 
@@ -61,6 +62,9 @@ enterBlockM = modifyState enterBlock
 
 exitBlockM :: Parser ()
 exitBlockM = getState >>= exitBlock >>= putState
+
+inBlockM :: Parser a -> Parser a
+inBlockM p = enterBlockM *> p <* exitBlockM
 
 type POperatorTable a = OperatorTable String ParseContext Identity a
 
