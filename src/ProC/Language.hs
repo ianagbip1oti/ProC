@@ -15,21 +15,12 @@ module ProC.Language
   , ProCProgram
   , Statement(..)
   , StringExpression(..)
-  , PVar(..)
   , StrBinOp(..)
-  , getIdentifier
   ) where
 
 import ProC.Language.PType
 
 type ProCProgram = Statement
-
-data PVar :: PType -> * where
-  PVar :: Identifier -> PVar a
-  deriving (Eq, Ord, Show)
-
-getIdentifier :: PVar a -> Identifier
-getIdentifier (PVar i) = i
 
 newtype Identifier =
   Identifier String
@@ -52,7 +43,7 @@ instance ExpressionType 'PInt where
 
 data Expression (a :: PType) where
   Literal :: LiteralType a -> Expression a
-  Variable :: PVar a -> Expression a
+  Variable :: Identifier -> Expression a
   UnaryOp :: UnaryOpType a -> Expression a -> Expression a
   BinaryOp :: BinaryOpType a -> Expression a -> Expression a -> Expression a
 
@@ -92,7 +83,7 @@ data StrBinOp =
 data StringExpression
   = ToS (Expression 'PInt)
   | StrLiteral String
-  | StrVariable (PVar 'PStr)
+  | StrVariable Identifier
   | StrBinOp StrBinOp
              StringExpression
              StringExpression
@@ -103,10 +94,10 @@ data Statement
   | Print StringExpression
   | Block [Statement]
   | Seq [Statement]
-  | BlnVarDecl (PVar 'PBln)
+  | BlnVarDecl Identifier
                (Expression 'PBln)
-  | IntVarDecl (PVar 'PInt)
+  | IntVarDecl Identifier
                (Expression 'PInt)
-  | StrVarDecl (PVar 'PStr)
+  | StrVarDecl Identifier
                StringExpression
   deriving (Eq, Show)

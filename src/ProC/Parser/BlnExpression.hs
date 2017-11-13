@@ -23,7 +23,7 @@ term = parens blnExpression <|> t <|> f <|> var
       ident <- identifier
       isValid <- isOfTypeM PBln ident
       unless isValid $ fail ("Not bln variable: " ++ show ident)
-      return . Variable $ PVar ident
+      return $ Variable ident
 
 ops :: POperatorTable (Expression 'PBln)
 ops = [[Prefix (op "!" (UnaryOp Not))], [inf "&&" And], [inf "||" Or]]

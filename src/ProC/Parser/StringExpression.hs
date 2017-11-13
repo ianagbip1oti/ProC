@@ -21,7 +21,7 @@ term = parens stringExpression <|> lit <|> num <|> var
       ident <- identifier
       isValid <- isOfTypeM PStr ident
       unless isValid $ fail ("Not str variable: " ++ show ident)
-      return . StrVariable $ PVar ident
+      return $ StrVariable ident
 
 ops :: POperatorTable StringExpression
 ops = [[Infix (reservedOp "++" >> return (StrBinOp Concat)) AssocLeft]]

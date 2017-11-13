@@ -37,15 +37,15 @@ varDeclStatement res exprP decl typ = do
 
 blnVarDeclStatement :: Parser Statement
 blnVarDeclStatement =
-  varDeclStatement "bln" blnExpression (BlnVarDecl . PVar) PBln
+  varDeclStatement "bln" blnExpression BlnVarDecl PBln
 
 intVarDeclStatement :: Parser Statement
 intVarDeclStatement =
-  varDeclStatement "int" numericExpression (IntVarDecl . PVar) PInt
+  varDeclStatement "int" numericExpression IntVarDecl PInt
 
 strVarDeclStatement :: Parser Statement
 strVarDeclStatement =
-  varDeclStatement "str" stringExpression (StrVarDecl . PVar) PStr
+  varDeclStatement "str" stringExpression StrVarDecl PStr
 
 blockStatement :: Parser Statement
 blockStatement =

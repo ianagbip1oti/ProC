@@ -14,40 +14,12 @@ module ProC.Interpreter.Context
 import           ProC.Language
 
 import           Control.Monad.State
+import Data.Dynamic
 import qualified Data.Map            as M
-
-data PValue
-  = PBlnValue Bool
-  | PIntValue Integer
-  | PStrValue String
-  deriving (Show)
-
-class PTypeMapping a where
-  type HType a :: *
-  wrapValue :: PVar a -> HType a -> PValue
-  unwrapValue :: (Monad m) => PVar a -> PValue -> m (HType a)
-
-instance PTypeMapping 'PBln where
-  type HType 'PBln = Bool
-  wrapValue _ = PBlnValue
-  unwrapValue _ (PBlnValue b) = return b
-  unwrapValue _ v             = fail $ "Invalid value " ++ show v
-
-instance PTypeMapping 'PInt where
-  type HType 'PInt = Integer
-  wrapValue _ = PIntValue
-  unwrapValue _ (PIntValue i) = return i
-  unwrapValue _ v             = fail $ "Invalid value " ++ show v
-
-instance PTypeMapping 'PStr where
-  type HType 'PStr = String
-  wrapValue _ = PStrValue
-  unwrapValue _ (PStrValue s) = return s
-  unwrapValue _ v             = fail $ "Invalid value " ++ show v
 
 data Context = Context
   { parent    :: Maybe Context
-  , variables :: M.Map Identifier PValue
+  , variables :: M.Map Identifier Dynamic
   }
 
 empty :: Context
@@ -62,22 +34,22 @@ exitBlock c =
     Nothing -> fail "Exited topmost Context"
     Just p  -> return p
 
-getVar :: (Monad m, PTypeMapping p) => PVar p -> Context -> m (HType p)
-getVar p c =
-  case M.lookup (getIdentifier p) (variables c) of
-    Nothing -> maybe (fail $ "Unknown: " ++ show p) (getVar p) (parent c)
-    Just v  -> unwrapValue p v
+getVar :: (Monad m, Typeable a) => Identifier -> Context -> m a
+getVar idn c =
+  case M.lookup idn (variables c) of
+    Nothing -> maybe (fail $ "Unknown: " ++ show idn) (getVar idn) (parent c)
+    Just v  -> maybe (fail $ "Bad Type: " ++ show idn) return (fromDynamic v)
 
-setVar :: (PTypeMapping p) => PVar p -> HType p -> Context -> Context
-setVar n v c =
-  c {variables = M.insert (getIdentifier n) (wrapValue n v) (variables c)}
+setVar :: Typeable a => Identifier -> a -> Context -> Context
+setVar idn v c =
+  c {variables = M.insert idn (toDyn v) (variables c)}
 
 type ContextM = StateT Context IO
 
-getVarM :: (PTypeMapping p) => PVar p -> ContextM (HType p)
+getVarM :: Typeable a => Identifier -> ContextM a
 getVarM p = get >>= getVar p
 
-setVarM :: (PTypeMapping p) => PVar p -> HType p -> ContextM ()
+setVarM :: Typeable a => Identifier -> a -> ContextM ()
 setVarM n v = modify (setVar n v)
 
 enterBlockM :: ContextM ()

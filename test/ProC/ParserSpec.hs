@@ -24,31 +24,31 @@ spec =
       parseProC [r| int a=0; { int b=a; } |] `shouldBe`
       Right
         (Seq
-           [ IntVarDecl (PVar (Identifier "a")) (Literal 0)
+           [ IntVarDecl (Identifier "a") (Literal 0)
            , Block
                [ IntVarDecl
-                   (PVar (Identifier "b"))
-                   (Variable (PVar (Identifier "a")))
+                   (Identifier "b")
+                   (Variable (Identifier "a"))
                ]
            ])
     it "allows shadowing in blocks" $
       parseProC [r| int a=0; { int a=1; } |] `shouldBe`
       Right
         (Seq
-           [ IntVarDecl (PVar (Identifier "a")) (Literal 0)
-           , Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
+           [ IntVarDecl (Identifier "a") (Literal 0)
+           , Block [IntVarDecl (Identifier "a") (Literal 1)]
            ])
     it "allows statements after blocks" $
       parseProC [r| { int a=1; } print("Hello World"); |] `shouldBe`
       Right
         (Seq
-           [ Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
+           [ Block [IntVarDecl (Identifier "a") (Literal 1)]
            , Print (StrLiteral "Hello World")
            ])
     it "allows shadowing after blocks" $
       parseProC [r| { int a=1; } int a=0; |] `shouldBe`
       Right
         (Seq
-           [ Block [IntVarDecl (PVar (Identifier "a")) (Literal 1)]
-           , IntVarDecl (PVar (Identifier "a")) (Literal 0)
+           [ Block [IntVarDecl (Identifier "a") (Literal 1)]
+           , IntVarDecl (Identifier "a") (Literal 0)
            ])

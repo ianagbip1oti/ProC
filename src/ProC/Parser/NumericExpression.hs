@@ -20,7 +20,7 @@ term = parens numericExpression <|> Literal <$> integer <|> var
       ident <- identifier
       isValid <- isOfTypeM PInt ident
       unless isValid $ fail ("Not int variable: " ++ show ident)
-      return . Variable $ PVar ident
+      return $ Variable ident
 
 ops :: POperatorTable (Expression 'PInt)
 ops =
