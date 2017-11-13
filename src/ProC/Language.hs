@@ -1,8 +1,3 @@
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE GADTs                #-}
-{-# LANGUAGE TypeFamilies         #-}
-{-# LANGUAGE UndecidableInstances #-}
-
 module ProC.Language
   ( module ProC.Language.PBlnExpression
   , module ProC.Language.PIntExpression
