@@ -12,15 +12,15 @@ import           Test.Hspec
 
 spec :: Spec
 spec = do
-  describe "intVarDeclStatement" $ do
-    it "should parse int var decl" $
+  describe "intVarDelStatement" $ do
+    it "should parse int var dcl" $
       parse statement "int a = 1" `shouldBe`
-      Right (IntVarDecl (Identifier "a") (PIntLiteral 1))
+      Right (IntVarDcl (Identifier "a") (PIntLiteral 1))
     it "should fail two vars same name" $
       parse statements "int a = 1; int a = 1;" `shouldSatisfy` isLeft
-  describe "strVarDeclStatement" $ do
-    it "should parse string var decl" $
+  describe "strVarDclStatement" $ do
+    it "should parse string var dcl" $
       parse statement "str a = \"abc\"" `shouldBe`
-      Right (StrVarDecl (Identifier "a") (PStrLiteral "abc"))
+      Right (StrVarDcl (Identifier "a") (PStrLiteral "abc"))
     it "should fail two vars same name" $
       parse statements "str a = \"a\"; str a = \"b\";" `shouldSatisfy` isLeft
