@@ -14,8 +14,9 @@ cabal-version:       >=1.8
 library
   hs-source-dirs:      src
   ghc-options:         -Wall -fwarn-tabs -Werror
-  exposed-modules:     ProC.Interpreter,
-                       ProC.Interpreter.Context,
+  exposed-modules:     ProC.Data.HierarchicalMap,
+                       ProC.Interpreter,
+                       ProC.Interpreter.RuntimeContext,
                        ProC.Language,
                        ProC.Language.PBlnExpression,
                        ProC.Language.PIntExpression,
