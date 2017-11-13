@@ -61,14 +61,17 @@ instance Eval PStrExpression String where
   eval (ToS n)                 = toString <$> eval n
 
 exec :: Statement -> ContextM ()
-exec (BlnVarDcl n e) = eval e >>= setVarM n
-exec (IntVarDcl n e) = eval e >>= setVarM n
-exec (StrVarDcl n e) = eval e >>= setVarM n
-exec Noop            = return ()
-exec (Print s)       = eval s >>= liftIO . putStrLn
-exec (Seq ss)        = forM_ ss exec
-exec (Block ss)      = enterBlockM >> forM_ ss exec >> exitBlockM
-exec w@(Whl e ss)    = eval e >>= flip when (exec (Block ss) >> exec w)
+exec (PBlnVarDcl n e) = eval e >>= setVarM n
+exec (PBlnVarAss n e) = eval e >>= setVarM n
+exec (PIntVarDcl n e) = eval e >>= setVarM n
+exec (PIntVarAss n e) = eval e >>= setVarM n
+exec (PStrVarDcl n e) = eval e >>= setVarM n
+exec (PStrVarAss n e) = eval e >>= setVarM n
+exec Noop             = return ()
+exec (Print s)        = eval s >>= liftIO . putStrLn
+exec (Seq ss)         = forM_ ss exec
+exec (Block ss)       = enterBlockM >> forM_ ss exec >> exitBlockM
+exec w@(Whl e ss)     = eval e >>= flip when (exec (Block ss) >> exec w)
 
 runProC :: ProCProgram -> IO ()
 runProC p = evalContextM (exec p)

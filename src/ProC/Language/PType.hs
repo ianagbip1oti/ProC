@@ -7,7 +7,7 @@ data PType
   = PBln
   | PInt
   | PStr
-  deriving (Eq, Ord)
+  deriving (Eq, Ord, Show)
 
 newtype Identifier =
   Identifier String
