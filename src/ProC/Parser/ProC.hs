@@ -1,6 +1,3 @@
-{-# LANGUAGE RankNTypes      #-}
-{-# LANGUAGE TemplateHaskell #-}
-
 module ProC.Parser.ProC
   ( Parser
   , POperatorTable
@@ -15,54 +12,27 @@ module ProC.Parser.ProC
 
 import           ProC.Language
 
-import Control.Lens
+import           Control.Lens
 
-import qualified Data.Map as M
-import Data.Maybe
+import qualified ProC.Data.HierarchicalMap as HM
 
-import           Text.Parsec           (ParseError, Parsec, getState,
-                                        modifyState, putState, runParser)
+import           Text.Parsec               (ParseError, Parsec, getState,
+                                            modifyState, putState, runParser)
 import           Text.Parsec.Expr
 
-data ParseContext = ParseContext
-  { _parent    :: Maybe ParseContext
-  , _variables :: M.Map Identifier PType
-  }
-
-makeLenses ''ParseContext
-
-varThisContext :: Identifier -> Traversal' ParseContext PType
-varThisContext idn = variables . at idn . _Just
-
-contextWith :: Identifier -> ParseContext -> Traversal' ParseContext ParseContext
-contextWith idn ctx =
-  case ctx ^? varThisContext idn of
-    Just _ -> id
-    Nothing ->
-      case ctx ^. parent of
-        Just p  -> parent . _Just . contextWith idn p
-        Nothing -> id
-
-variable :: Identifier -> ParseContext -> Traversal' ParseContext PType
-variable idn ctx = contextWith idn ctx . varThisContext idn
-
-insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
-insertVariable v t = variables . at v ?~ t
-
-isDefinedInCurrentScope :: Identifier -> ParseContext -> Bool
-isDefinedInCurrentScope v c = isJust $ c ^? varThisContext v
-
-isOfType :: PType -> Identifier -> ParseContext -> Bool
-isOfType t i c = c ^? variable i c == Just t
+type ParseContext = HM.HierarchicalMap Identifier PType
 
 empty :: ParseContext
-empty = ParseContext Nothing M.empty
+empty = HM.empty
 
-enterBlock :: ParseContext -> ParseContext
-enterBlock c = ParseContext {_parent = Just c, _variables = M.empty}
+insertVariable :: Identifier -> PType -> ParseContext -> ParseContext
+insertVariable = HM.insert
 
-exitBlock :: (Monad m) => ParseContext -> m ParseContext
-exitBlock c = maybe (fail "Attempt to exit top level block") return (c ^. parent)
+isDefinedInCurrentScope :: Identifier -> ParseContext -> Bool
+isDefinedInCurrentScope = HM.memberThisLevel
+
+isOfType :: PType -> Identifier -> ParseContext -> Bool
+isOfType t i c = HM.lookup i c == Just t
 
 type Parser = Parsec String ParseContext
 
@@ -76,10 +46,10 @@ isOfTypeM :: PType -> Identifier -> Parser Bool
 isOfTypeM t i = isOfType t i <$> getState
 
 enterBlockM :: Parser ()
-enterBlockM = modifyState enterBlock
+enterBlockM = modifyState HM.push
 
 exitBlockM :: Parser ()
-exitBlockM = getState >>= exitBlock >>= putState
+exitBlockM = getState >>= HM.pop >>= putState
 
 inBlockM :: Parser a -> Parser a
 inBlockM p = enterBlockM *> p <* exitBlockM

@@ -6,7 +6,7 @@ module ProC.Interpreter
   ( runProC
   ) where
 
-import           ProC.Interpreter.Context
+import           ProC.Interpreter.RuntimeContext
 import           ProC.Language
 
 import           Control.Monad.State
@@ -21,7 +21,7 @@ instance ToString Integer where
   toString = show
 
 class Eval exp res | exp -> res where
-  eval :: exp -> ContextM res
+  eval :: exp -> RuntimeContextM res
 
 instance Eval PBlnExpression Bool where
   eval (PBlnLiteral b) = return b
@@ -59,7 +59,7 @@ instance Eval PStrExpression String where
   eval (PStrBinOpr Concat l r) = (++) <$> eval l <*> eval r
   eval (ToS n)                 = toString <$> eval n
 
-exec :: Statement -> ContextM ()
+exec :: Statement -> RuntimeContextM ()
 exec (PBlnVarDcl n e) = eval e >>= declareVarM n
 exec (PBlnVarAss n e) = eval e >>= setVarM n
 exec (PIntVarDcl n e) = eval e >>= declareVarM n
