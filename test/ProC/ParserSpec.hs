@@ -25,11 +25,7 @@ spec =
       Right
         (Seq
            [ IntVarDecl (Identifier "a") (PIntLiteral 0)
-           , Block
-               [ IntVarDecl
-                   (Identifier "b")
-                   (PIntVariable (Identifier "a"))
-               ]
+           , Block [IntVarDecl (Identifier "b") (PIntVariable (Identifier "a"))]
            ])
     it "allows shadowing in blocks" $
       parseProC [r| int a=0; { int a=1; } |] `shouldBe`

@@ -1,7 +1,10 @@
-module ProC.Language.PStrExpression(PStrExpression(..), PStrBinOpr(..)) where
+module ProC.Language.PStrExpression
+  ( PStrExpression(..)
+  , PStrBinOpr(..)
+  ) where
 
-import ProC.Language.PIntExpression
-import ProC.Language.PType
+import           ProC.Language.PIntExpression
+import           ProC.Language.PType
 
 data PStrBinOpr =
   Concat
@@ -12,8 +15,6 @@ data PStrExpression
   | PStrLiteral String
   | PStrVariable Identifier
   | PStrBinOpr PStrBinOpr
-             PStrExpression
-             PStrExpression
+               PStrExpression
+               PStrExpression
   deriving (Eq, Show)
-
-

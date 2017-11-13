@@ -1,20 +1,21 @@
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE GADTs                #-}
-{-# LANGUAGE StandaloneDeriving   #-}
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module ProC.Language
-  ( module ProC.Language.PBlnExpression, module ProC.Language.PIntExpression
-  , module ProC.Language.PStrExpression, module ProC.Language.PType
+  ( module ProC.Language.PBlnExpression
+  , module ProC.Language.PIntExpression
+  , module ProC.Language.PStrExpression
+  , module ProC.Language.PType
   , ProCProgram
   , Statement(..)
   ) where
 
-import ProC.Language.PBlnExpression
-import ProC.Language.PIntExpression
-import ProC.Language.PStrExpression
-import ProC.Language.PType
+import           ProC.Language.PBlnExpression
+import           ProC.Language.PIntExpression
+import           ProC.Language.PStrExpression
+import           ProC.Language.PType
 
 type ProCProgram = Statement
 

@@ -4,8 +4,8 @@ module ProC.Parser.Statement
   ) where
 
 import           ProC.Language
-import           ProC.Parser.PBlnExpression
 import           ProC.Parser.Lexer
+import           ProC.Parser.PBlnExpression
 import           ProC.Parser.PIntExpression
 import           ProC.Parser.ProC
 import           ProC.Parser.PStrExpression
@@ -36,16 +36,13 @@ varDeclStatement res exprP decl typ = do
   return $ decl name expr
 
 blnVarDeclStatement :: Parser Statement
-blnVarDeclStatement =
-  varDeclStatement "bln" pBlnExpression BlnVarDecl PBln
+blnVarDeclStatement = varDeclStatement "bln" pBlnExpression BlnVarDecl PBln
 
 intVarDeclStatement :: Parser Statement
-intVarDeclStatement =
-  varDeclStatement "int" pIntExpression IntVarDecl PInt
+intVarDeclStatement = varDeclStatement "int" pIntExpression IntVarDecl PInt
 
 strVarDeclStatement :: Parser Statement
-strVarDeclStatement =
-  varDeclStatement "str" pStrExpression StrVarDecl PStr
+strVarDeclStatement = varDeclStatement "str" pStrExpression StrVarDecl PStr
 
 blockStatement :: Parser Statement
 blockStatement =

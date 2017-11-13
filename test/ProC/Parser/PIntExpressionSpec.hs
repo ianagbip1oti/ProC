@@ -3,7 +3,7 @@ module ProC.Parser.PIntExpressionSpec
   ) where
 
 import           ProC.Language
-import           ProC.LanguageInstances        ()
+import           ProC.LanguageInstances     ()
 import           ProC.Parser.PIntExpression
 import           ProC.Parser.ProC
 import           ProC.Parser.Statement

@@ -3,7 +3,7 @@ module ProC.Parser.PBlnExpressionSpec
   ) where
 
 import           ProC.Language
-import           ProC.LanguageInstances    ()
+import           ProC.LanguageInstances     ()
 import           ProC.Parser.PBlnExpression
 import           ProC.Parser.ProC
 
@@ -22,7 +22,8 @@ spec :: Spec
 spec =
   describe "term" $ do
     it "should parse literals" $
-      property $ \b -> parse pBlnExpression (formatBool b) == Right (PBlnLiteral b)
+      property $ \b ->
+        parse pBlnExpression (formatBool b) == Right (PBlnLiteral b)
     it "should parse binary ops" $
       property $ \o l r ->
         parse pBlnExpression (formatBool l ++ formatBinOp o ++ formatBool r) ==

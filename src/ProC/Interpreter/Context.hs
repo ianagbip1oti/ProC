@@ -13,7 +13,7 @@ module ProC.Interpreter.Context
 import           ProC.Language
 
 import           Control.Monad.State
-import Data.Dynamic
+import           Data.Dynamic
 import qualified Data.Map            as M
 
 data Context = Context
@@ -40,8 +40,7 @@ getVar idn c =
     Just v  -> maybe (fail $ "Bad Type: " ++ show idn) return (fromDynamic v)
 
 setVar :: Typeable a => Identifier -> a -> Context -> Context
-setVar idn v c =
-  c {variables = M.insert idn (toDyn v) (variables c)}
+setVar idn v c = c {variables = M.insert idn (toDyn v) (variables c)}
 
 type ContextM = StateT Context IO
 

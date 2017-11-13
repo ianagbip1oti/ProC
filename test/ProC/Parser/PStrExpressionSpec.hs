@@ -4,8 +4,8 @@ module ProC.Parser.PStrExpressionSpec
 
 import           ProC.Language
 import           ProC.Parser.ProC
-import           ProC.Parser.Statement
 import           ProC.Parser.PStrExpression
+import           ProC.Parser.Statement
 
 import           Data.Either
 

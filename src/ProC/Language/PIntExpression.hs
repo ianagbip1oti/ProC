@@ -1,6 +1,10 @@
-module ProC.Language.PIntExpression(PIntExpression(..), PIntUnrOpr(..), PIntBinOpr(..)) where
+module ProC.Language.PIntExpression
+  ( PIntExpression(..)
+  , PIntUnrOpr(..)
+  , PIntBinOpr(..)
+  ) where
 
-import ProC.Language.PType
+import           ProC.Language.PType
 
 data PIntUnrOpr =
   Negate
@@ -16,7 +20,9 @@ data PIntBinOpr
 data PIntExpression
   = PIntLiteral Integer
   | PIntVariable Identifier
-  | PIntUnrOpr PIntUnrOpr PIntExpression
-  | PIntBinOpr PIntBinOpr PIntExpression PIntExpression
+  | PIntUnrOpr PIntUnrOpr
+               PIntExpression
+  | PIntBinOpr PIntBinOpr
+               PIntExpression
+               PIntExpression
   deriving (Eq, Show)
-  

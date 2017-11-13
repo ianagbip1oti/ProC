@@ -25,9 +25,9 @@ class Eval exp res | exp -> res where
   eval :: exp -> ContextM res
 
 instance Eval PBlnExpression Bool where
-  eval (PBlnLiteral b)        = return b
-  eval (PBlnVariable n)       = getVarM n
-  eval (PBlnUnrOpr Not b)    = not <$> eval b
+  eval (PBlnLiteral b)      = return b
+  eval (PBlnVariable n)     = getVarM n
+  eval (PBlnUnrOpr Not b)   = not <$> eval b
   eval (PBlnBinOpr And l r) = (&&) <$> eval l <*> eval r
   eval (PBlnBinOpr Or l r)  = (||) <$> eval l <*> eval r
 
@@ -45,10 +45,10 @@ instance Eval PIntExpression Integer where
       op f x y = f <$> eval x <*> eval y
 
 instance Eval PStrExpression String where
-  eval (PStrLiteral s)        = return s
-  eval (PStrVariable s)       = getVarM s
+  eval (PStrLiteral s)         = return s
+  eval (PStrVariable s)        = getVarM s
   eval (PStrBinOpr Concat l r) = (++) <$> eval l <*> eval r
-  eval (ToS n)               = toString <$> eval n
+  eval (ToS n)                 = toString <$> eval n
 
 exec :: Statement -> ContextM ()
 exec (BlnVarDecl n e) = eval e >>= setVarM n

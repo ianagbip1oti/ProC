@@ -1,6 +1,10 @@
-module ProC.Language.PBlnExpression(PBlnExpression(..), PBlnUnrOpr(..), PBlnBinOpr(..)) where
+module ProC.Language.PBlnExpression
+  ( PBlnExpression(..)
+  , PBlnUnrOpr(..)
+  , PBlnBinOpr(..)
+  ) where
 
-import ProC.Language.PType
+import           ProC.Language.PType
 
 data PBlnUnrOpr =
   Not
@@ -14,8 +18,9 @@ data PBlnBinOpr
 data PBlnExpression
   = PBlnLiteral Bool
   | PBlnVariable Identifier
-  | PBlnUnrOpr PBlnUnrOpr PBlnExpression
-  | PBlnBinOpr PBlnBinOpr PBlnExpression PBlnExpression
+  | PBlnUnrOpr PBlnUnrOpr
+               PBlnExpression
+  | PBlnBinOpr PBlnBinOpr
+               PBlnExpression
+               PBlnExpression
   deriving (Eq, Show)
-
-
