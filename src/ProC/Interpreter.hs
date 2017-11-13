@@ -68,7 +68,7 @@ exec Noop            = return ()
 exec (Print s)       = eval s >>= liftIO . putStrLn
 exec (Seq ss)        = forM_ ss exec
 exec (Block ss)      = enterBlockM >> forM_ ss exec >> exitBlockM
-exec w@(Whl e ss)    = eval e >>= (flip when) (exec (Block ss) >> exec w)
+exec w@(Whl e ss)    = eval e >>= flip when (exec (Block ss) >> exec w)
 
 runProC :: ProCProgram -> IO ()
 runProC p = evalContextM (exec p)
