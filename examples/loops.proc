@@ -1,0 +1,8 @@
+
+print("While loop...");
+
+int a = 0;
+whl (a < 3) {
+  print(tos(a));
+  a = a + 1;
+}
