@@ -11,24 +11,28 @@ module ProC.Interpreter.RuntimeContext
 import qualified ProC.Data.HierarchicalMap as HM
 import           ProC.Language
 
+import           Control.Concurrent.STM
 import           Control.Monad.State
 import           Data.Dynamic
 
 type RuntimeContext = HM.HierarchicalMap Identifier Dynamic
 
-empty :: RuntimeContext
-empty = HM.empty
+empty :: MonadIO m => m RuntimeContext
+empty = liftIO (atomically HM.empty)
 
-getVar :: (Monad m, Typeable a) => Identifier -> RuntimeContext -> m a
-getVar idn c = maybe (fail $ "Unknown: " ++ show idn) from $ HM.lookup idn c
+getVar ::
+     (Monad m, MonadIO m, Typeable a) => Identifier -> RuntimeContext -> m a
+getVar idn c = maybe unknown from =<< (liftIO . atomically . HM.lookup idn) c
   where
     from v = maybe (fail $ "Bad Type: " ++ show idn) return $ fromDynamic v
+    unknown = fail $ "Unknown: " ++ show idn
 
-declareVar :: Typeable a => Identifier -> a -> RuntimeContext -> RuntimeContext
-declareVar idn v = HM.insert idn $ toDyn v
+declareVar ::
+     (MonadIO m, Typeable a) => Identifier -> a -> RuntimeContext -> m ()
+declareVar idn v = liftIO . atomically . HM.insert idn (toDyn v)
 
-setVar :: Typeable a => Identifier -> a -> RuntimeContext -> RuntimeContext
-setVar idn v = HM.update idn $ toDyn v
+setVar :: (MonadIO m, Typeable a) => Identifier -> a -> RuntimeContext -> m ()
+setVar idn v = liftIO . atomically . HM.update idn (toDyn v)
 
 type RuntimeContextM = StateT RuntimeContext IO
 
@@ -36,16 +40,16 @@ getVarM :: Typeable a => Identifier -> RuntimeContextM a
 getVarM p = get >>= getVar p
 
 declareVarM :: Typeable a => Identifier -> a -> RuntimeContextM ()
-declareVarM n v = modify $ declareVar n v
+declareVarM idn v = get >>= declareVar idn v
 
 setVarM :: Typeable a => Identifier -> a -> RuntimeContextM ()
-setVarM n v = modify $ setVar n v
+setVarM n v = get >>= setVar n v
 
 enterBlockM :: RuntimeContextM ()
-enterBlockM = modify HM.push
+enterBlockM = get >>= liftIO . atomically . HM.push >>= put
 
 exitBlockM :: RuntimeContextM ()
-exitBlockM = get >>= HM.pop >>= put
+exitBlockM = get >>= liftIO . atomically . HM.pop >>= put
 
 evalContextM :: RuntimeContextM a -> IO a
-evalContextM f = evalStateT f empty
+evalContextM f = evalStateT f =<< empty

@@ -15,7 +15,7 @@ import           Text.RawString.QQ
 
 run :: String -> IO String
 run p = do
-  parsed <- either failedParse return $ parseProC p
+  parsed <- either failedParse return =<< parseProC p
   capture_ $ runProC parsed
   where
     failedParse err = fail $ "Failed to parse: " ++ show err

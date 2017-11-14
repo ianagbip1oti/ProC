@@ -1,6 +1,3 @@
-{-# LANGUAGE RankNTypes      #-}
-{-# LANGUAGE TemplateHaskell #-}
-
 module ProC.Data.HierarchicalMap
   ( HierarchicalMap
   , empty
@@ -12,56 +9,41 @@ module ProC.Data.HierarchicalMap
   , lookup
   ) where
 
-import           Prelude      hiding (lookup)
+import           Prelude                hiding (lookup)
 
-import           Control.Lens
+import           Control.Concurrent.STM
 
-import qualified Data.Map     as M
-import           Data.Maybe
+import qualified Data.Map               as M
 
 data HierarchicalMap k v = HierarchicalMap
-  { _parent  :: Maybe (HierarchicalMap k v)
-  , _entries :: M.Map k v
+  { parent  :: Maybe (HierarchicalMap k v)
+  , entries :: TVar (M.Map k v)
   }
 
-makeLenses ''HierarchicalMap
+empty :: STM (HierarchicalMap k v)
+empty = HierarchicalMap Nothing <$> newTVar M.empty
 
-empty :: HierarchicalMap k v
-empty = HierarchicalMap Nothing M.empty
-
-push :: HierarchicalMap k v -> HierarchicalMap k v
-push m = parent ?~ m $ empty
+push :: HierarchicalMap k v -> STM (HierarchicalMap k v)
+push m = HierarchicalMap (Just m) <$> newTVar M.empty
 
 pop :: Monad m => HierarchicalMap k v -> m (HierarchicalMap k v)
-pop m = maybe (fail "Popped topmost level") return $ m ^. parent
+pop m = maybe (fail "Popped topmost level") return $ parent m
 
-keyThisLevel :: Ord k => k -> Traversal' (HierarchicalMap k v) v
-keyThisLevel k = entries . at k . _Just
+memberThisLevel :: Ord k => k -> HierarchicalMap k v -> STM Bool
+memberThisLevel k m = M.member k <$> readTVar (entries m)
 
-levelWith ::
-     Ord k
-  => k
-  -> HierarchicalMap k v
-  -> Traversal' (HierarchicalMap k v) (HierarchicalMap k v)
-levelWith k m =
-  case m ^? keyThisLevel k of
-    Just _ -> id
-    Nothing ->
-      case m ^. parent of
-        Just p  -> parent . _Just . levelWith k p
-        Nothing -> id
+insert :: Ord k => k -> v -> HierarchicalMap k v -> STM ()
+insert k v m = modifyTVar (entries m) (M.insert k v)
 
-key :: Ord k => k -> HierarchicalMap k v -> Traversal' (HierarchicalMap k v) v
-key k m = levelWith k m . keyThisLevel k
+lookup :: Ord k => k -> HierarchicalMap k v -> STM (Maybe v)
+lookup k m = maybe lookupInParent (return . Just) =<< lookupThisLevel
+  where
+    lookupThisLevel = M.lookup k <$> readTVar (entries m)
+    lookupInParent = maybe (return Nothing) (lookup k) (parent m)
 
-memberThisLevel :: Ord k => k -> HierarchicalMap k v -> Bool
-memberThisLevel k m = isJust $ m ^. entries ^. at k
-
-insert :: Ord k => k -> v -> HierarchicalMap k v -> HierarchicalMap k v
-insert k v = entries . at k ?~ v
-
-update :: Ord k => k -> v -> HierarchicalMap k v -> HierarchicalMap k v
-update k v m = key k m .~ v $ m
-
-lookup :: Ord k => k -> HierarchicalMap k v -> Maybe v
-lookup k m = m ^? key k m
+update :: (Show k, Ord k) => k -> v -> HierarchicalMap k v -> STM ()
+update k v m = do
+  isThisLevel <- memberThisLevel k m
+  if isThisLevel
+    then insert k v m
+    else maybe (fail $ "Does not exist: " ++ show k) (update k v) (parent m)
