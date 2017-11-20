@@ -21,7 +21,7 @@ import           Text.Parsec               (ParseError, ParsecT, getState,
                                             putState, runParserT)
 import           Text.Parsec.Expr
 
-type ParseContext = HM.HierarchicalMap Identifier PType
+type ParseContext = HM.HMap Identifier PType
 
 empty :: MonadIO m => m ParseContext
 empty = liftIO (atomically HM.empty)

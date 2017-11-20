@@ -31,6 +31,7 @@ library
                        ProC.Parser.Statement
   build-depends:       base == 4.9.1.0,
                        containers == 0.5.7.1,
+                       data-fix == 0.0.7,
                        mtl == 2.2.1,
                        parsec == 3.1.11,
                        stm == 2.4.4.1

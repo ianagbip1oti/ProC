@@ -15,7 +15,7 @@ import           Control.Concurrent.STM
 import           Control.Monad.State
 import           Data.Dynamic
 
-type RuntimeContext = HM.HierarchicalMap Identifier Dynamic
+type RuntimeContext = HM.HMap Identifier Dynamic
 
 empty :: MonadIO m => m RuntimeContext
 empty = liftIO (atomically HM.empty)
