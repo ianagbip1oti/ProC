@@ -8,5 +8,5 @@ import           ProC.Parser.Statement
 
 import           Text.Parsec           (ParseError)
 
-parseProC :: String -> Either ParseError ProCProgram
+parseProC :: String -> IO (Either ParseError ProCProgram)
 parseProC = parse statements

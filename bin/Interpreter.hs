@@ -11,6 +11,7 @@ main :: IO ()
 main = do
   inputFile <- head <$> getArgs
   input <- readFile inputFile
-  case parseProC input of
+  prog <- parseProC input
+  case prog of
     (Left e)  -> print e
     (Right p) -> runProC p

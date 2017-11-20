@@ -1,8 +1,7 @@
-{-# LANGUAGE RankNTypes      #-}
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE LambdaCase #-}
 
 module ProC.Data.HierarchicalMap
-  ( HierarchicalMap
+  ( HMap
   , empty
   , push
   , pop
@@ -12,56 +11,78 @@ module ProC.Data.HierarchicalMap
   , lookup
   ) where
 
-import           Prelude      hiding (lookup)
+import           Prelude                hiding (lookup)
 
-import           Control.Lens
+import           Control.Concurrent.STM
+import           Control.Monad
 
-import qualified Data.Map     as M
-import           Data.Maybe
+import           Data.Fix
 
-data HierarchicalMap k v = HierarchicalMap
-  { _parent  :: Maybe (HierarchicalMap k v)
-  , _entries :: M.Map k v
-  }
+import qualified Data.Map               as M
 
-makeLenses ''HierarchicalMap
+data HMapF k v a
+  = Top
+  | HM a
+       (TVar (M.Map k v))
 
-empty :: HierarchicalMap k v
-empty = HierarchicalMap Nothing M.empty
+type HMap k v = Fix (HMapF k v)
 
-push :: HierarchicalMap k v -> HierarchicalMap k v
-push m = parent ?~ m $ empty
+instance Functor (HMapF k v) where
+  fmap _ Top      = Top
+  fmap f (HM a e) = HM (f a) e
 
-pop :: Monad m => HierarchicalMap k v -> m (HierarchicalMap k v)
-pop m = maybe (fail "Popped topmost level") return $ m ^. parent
+instance Foldable (HMapF k v) where
+  foldMap _ Top      = mempty
+  foldMap f (HM a _) = f a
 
-keyThisLevel :: Ord k => k -> Traversal' (HierarchicalMap k v) v
-keyThisLevel k = entries . at k . _Just
+instance Traversable (HMapF k v) where
+  traverse _ Top      = pure Top
+  traverse f (HM a e) = HM <$> f a <*> pure e
 
-levelWith ::
-     Ord k
-  => k
-  -> HierarchicalMap k v
-  -> Traversal' (HierarchicalMap k v) (HierarchicalMap k v)
-levelWith k m =
-  case m ^? keyThisLevel k of
-    Just _ -> id
-    Nothing ->
-      case m ^. parent of
-        Just p  -> parent . _Just . levelWith k p
-        Nothing -> id
+parent :: Monad m => HMap k v -> m (HMap k v)
+parent m =
+  case unFix m of
+    Top    -> fail "No parent"
+    HM p _ -> return p
 
-key :: Ord k => k -> HierarchicalMap k v -> Traversal' (HierarchicalMap k v) v
-key k m = levelWith k m . keyThisLevel k
+entries :: HMap k v -> STM (M.Map k v)
+entries m =
+  case unFix m of
+    Top    -> return M.empty
+    HM _ e -> readTVar e
 
-memberThisLevel :: Ord k => k -> HierarchicalMap k v -> Bool
-memberThisLevel k m = isJust $ m ^. entries ^. at k
+modifyEntries :: HMap k v -> (M.Map k v -> M.Map k v) -> STM ()
+modifyEntries m f =
+  case unFix m of
+    Top    -> fail "Can not modify entries of TOP"
+    HM _ e -> modifyTVar e f
 
-insert :: Ord k => k -> v -> HierarchicalMap k v -> HierarchicalMap k v
-insert k v = entries . at k ?~ v
+empty :: STM (HMap k v)
+empty = Fix . HM (Fix Top) <$> newTVar M.empty
 
-update :: Ord k => k -> v -> HierarchicalMap k v -> HierarchicalMap k v
-update k v m = key k m .~ v $ m
+push :: HMap k v -> STM (HMap k v)
+push m = Fix . HM m <$> newTVar M.empty
 
-lookup :: Ord k => k -> HierarchicalMap k v -> Maybe v
-lookup k m = m ^? key k m
+pop :: Monad m => HMap k v -> m (HMap k v)
+pop = parent
+
+memberThisLevel :: Ord k => k -> HMap k v -> STM Bool
+memberThisLevel k m = M.member k <$> entries m
+
+insert :: Ord k => k -> v -> HMap k v -> STM ()
+insert k v m = modifyEntries m $ M.insert k v
+
+lookup :: Ord k => k -> HMap k v -> STM (Maybe v)
+lookup k =
+  cataM $ \case
+    Top -> return Nothing
+    HM p e -> do
+      v <- M.lookup k <$> readTVar e
+      return $ msum [v, p]
+
+update :: (Show k, Ord k) => k -> v -> HMap k v -> STM ()
+update k v m = do
+  isThisLevel <- memberThisLevel k m
+  if isThisLevel
+    then insert k v m
+    else maybe (fail $ "Does not exist: " ++ show k) (update k v) (parent m)

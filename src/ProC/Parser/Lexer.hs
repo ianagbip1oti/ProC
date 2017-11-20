@@ -14,20 +14,21 @@ module ProC.Parser.Lexer
 import           ProC.Language
 import           ProC.Parser.ProC
 
-import           Data.Functor.Identity
-
 import           Text.Parsec
-import           Text.Parsec.Language
-import qualified Text.Parsec.Token     as Token
+import qualified Text.Parsec.Token as Token
 
-procDef :: LanguageDef a
+procDef :: Token.GenLanguageDef String u IO
 procDef =
-  emptyDef
-  { Token.commentStart = "/*"
+  Token.LanguageDef
+  { Token.caseSensitive = False
+  , Token.commentStart = "/*"
   , Token.commentEnd = "*/"
   , Token.commentLine = "//"
   , Token.identStart = letter
   , Token.identLetter = alphaNum
+  , Token.nestedComments = True
+  , Token.opStart = Token.opLetter procDef
+  , Token.opLetter = oneOf ":!#$%&*+./<=>?@\\^|-~"
   , Token.reservedNames = ["fls", "int", "print", "str", "tru", "whl"]
   , Token.reservedOpNames =
       [ "="
@@ -51,7 +52,7 @@ procDef =
 braces :: Parser a -> Parser a
 braces = Token.braces lexer
 
-lexer :: Token.GenTokenParser String u Identity
+lexer :: Token.GenTokenParser String u IO
 lexer = Token.makeTokenParser procDef
 
 identifier :: Parser Identifier

@@ -31,9 +31,10 @@ library
                        ProC.Parser.Statement
   build-depends:       base == 4.9.1.0,
                        containers == 0.5.7.1,
-                       lens == 4.15.4,
+                       data-fix == 0.0.7,
                        mtl == 2.2.1,
-                       parsec == 3.1.11
+                       parsec == 3.1.11,
+                       stm == 2.4.4.1
                        
 executable ProC
   hs-source-dirs:      bin
@@ -47,11 +48,9 @@ test-suite spec
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  -- no-warn-orphans: Orphan instances of Arbitrary are too useful
-  ghc-options:         -Wall -fwarn-tabs -Werror -fno-warn-orphans
-  other-modules:       ProC.InterpreterSpec,
-                       ProC.LanguageInstances,
-                       ProC.LanguageSpec,
+  ghc-options:         -Wall -fwarn-tabs -Werror
+  other-modules:       ProC.Expectations,
+                       ProC.InterpreterSpec,
                        ProC.ParserSpec,
                        ProC.Parser.PBlnExpressionSpec,
                        ProC.Parser.PIntExpressionSpec,
@@ -61,6 +60,6 @@ test-suite spec
   build-depends:       base == 4.9.1.0,
                        hspec == 2.4.4,
                        ProC,
+                       parsec == 3.1.11,
                        raw-strings-qq == 1.1,
-                       silently == 1.2.5,
-                       QuickCheck == 2.9.2
+                       silently == 1.2.5
