@@ -36,9 +36,16 @@ library
                        parsec == 3.1.11,
                        stm == 2.4.4.1
                        
-executable ProC
+executable proc
   hs-source-dirs:      bin
   main-is:             Interpreter.hs
+  ghc-options:         -Wall -fwarn-tabs -Werror
+  build-depends:       base == 4.9.1.0,
+                       ProC
+
+executable procc
+  hs-source-dirs:      bin
+  main-is:             Compiler.hs
   ghc-options:         -Wall -fwarn-tabs -Werror
   build-depends:       base == 4.9.1.0,
                        ProC
