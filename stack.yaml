@@ -1,0 +1,8 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- .
+extra-deps:
+- fixplate-0.1.7
+- megaparsec-6.2.0
+resolver: lts-9.14
